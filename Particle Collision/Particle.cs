@@ -25,5 +25,12 @@ namespace Particle_Collision
             this.Hardness = hardness;
             this.Colour = colour;
         }
+
+        public void Update(double gravity)
+        {
+            this.Velocity.Y += gravity;
+
+            this.Location += this.Velocity;
+        }
     }
 }

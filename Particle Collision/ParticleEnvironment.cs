@@ -15,9 +15,11 @@ namespace Particle_Collision
         public List<Particle> particles = new List<Particle>();
 
         private bool timerRunning = true;
-        private double gravity = 0.0981;
-        private double terminalSpeed = 1;
-        private Random random = new Random("test".GetHashCode());
+        private int timerTicks = 0;
+        private double gravity = 0;
+        private double terminalSpeed = 10;
+        private double wallHardness = 1;
+        private Random random = new Random("testseed".GetHashCode());
 
         public ParticleEnvironment()
         {
@@ -32,8 +34,8 @@ namespace Particle_Collision
 
         void AddParticles()
         {
-            particles.Add(new Particle(new Vector2(200, 200), new Vector2(10, 0), 20, 5, 0.5, Color.Red));
-            particles.Add(new Particle(new Vector2(200 + 500, 200 - 20), new Vector2(-10, 0), 20, 1, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(this.Width / 2 - 250, this.Height / 2), new Vector2(1, 0), 20, 1, 1, Color.Green));
+            particles.Add(new Particle(new Vector2(this.Width / 2, this.Height / 2 - 10), new Vector2(-1, 0), 20, 1, 1, Color.Red));
         }
 
         void DrawParticles()
@@ -53,23 +55,7 @@ namespace Particle_Collision
             DrawBox.Invalidate();
         }
 
-        void UpdateParticlePosition()
-        {
-            for (int i = 0; i < particles.Count(); i++)
-            {
-                particles[i].Location = particles[i].Location + particles[i].Velocity;
-            }
-        }
-
-        void UpdateParticleVelocity()
-        {
-            for (int i = 0; i < particles.Count(); i++)
-            {
-                particles[i].Velocity.Y += gravity;
-            }
-        }
-
-        void CheckForCollsion()
+        void CheckForCollsions()
         {
             for (int i = 0; i < particles.Count(); i++)
             {
@@ -81,14 +67,6 @@ namespace Particle_Collision
                     if (CircleIntersect(particle1, particle2))
                     {
                         CollideParticles(particle1, particle2);
-                        particle1.Colour = Color.Blue;
-                        particle2.Colour = Color.Blue;
-                        
-                    }
-                    else
-                    {
-                        particle1.Colour = Color.Red;
-                        particle2.Colour = Color.Red;
                     }
                 }
             }
@@ -101,10 +79,15 @@ namespace Particle_Collision
 
             Vector2 collisionVectorNorm = new Vector2(collisionVector.X / distance, collisionVector.Y / distance);
 
-            Vector2 relativeVelocityVector = new Vector2(p1.Velocity.X - p2.Velocity.X, p2.Velocity.Y - p1.Velocity.Y);
+            Vector2 relativeVelocityVector = new Vector2(p1.Velocity.X - p2.Velocity.X, p1.Velocity.Y - p2.Velocity.Y);
             double speed = relativeVelocityVector.X * collisionVectorNorm.X + relativeVelocityVector.Y * collisionVectorNorm.Y;
 
             speed *= Math.Min(p1.Hardness, p2.Hardness);
+
+            if (speed < 0)
+            {
+                return;
+            }
 
             double impulse = 2 * speed / (p1.Mass + p2.Mass);
 
@@ -114,37 +97,30 @@ namespace Particle_Collision
             p2.Velocity.Y += (impulse * p1.Mass * collisionVectorNorm.Y);
         }
 
-        void CheckForWallCollision()
+        void CheckForWallCollision(Particle particle)
         {
-            Particle particle;
-            for (int i = 0; i < particles.Count(); i++)
+            double speedDampen = this.wallHardness;
+
+            if (particle.Location.X < particle.Radius)
             {
-                particle = particles[i];
-                double speedDampen = particle.Hardness;
+                particle.Velocity.X = Math.Abs(particle.Velocity.X) * speedDampen;
+                particle.Location.X = particle.Radius;
+            }
+            else if (particle.Location.X > DrawBox.Width - particle.Radius)
+            {
+                particle.Velocity.X = -Math.Abs(particle.Velocity.X) * speedDampen;
+                particle.Location.X = DrawBox.Width - particle.Radius;
+            }
 
-                if (particle.Location.X < particle.Radius)
-                {
-                    particle.Velocity.X = Math.Abs(particle.Velocity.X) * speedDampen;
-                    particle.Location.X = particle.Radius;
-                }
-                else if (particle.Location.X > DrawBox.Width - particle.Radius)
-                {
-                    particle.Velocity.X = -Math.Abs(particle.Velocity.X) * speedDampen;
-                    particle.Location.X = DrawBox.Width - particle.Radius;
-                }
-
-                if (particle.Location.Y < particle.Radius)
-                {
-                    particle.Velocity.Y = Math.Abs(particle.Velocity.Y) * speedDampen;
-                    particle.Location.Y = particle.Radius;
-                }
-                else if (particle.Location.Y > DrawBox.Height - particle.Radius)
-                {
-                    particle.Velocity.Y = -Math.Abs(particle.Velocity.Y) * speedDampen;
-                    particle.Location.Y = DrawBox.Height - particle.Radius;
-                }
-
-                particles[i] = particle;
+            if (particle.Location.Y < particle.Radius)
+            {
+                particle.Velocity.Y = Math.Abs(particle.Velocity.Y) * speedDampen;
+                particle.Location.Y = particle.Radius;
+            }
+            else if (particle.Location.Y > DrawBox.Height - particle.Radius)
+            {
+                particle.Velocity.Y = -Math.Abs(particle.Velocity.Y) * speedDampen;
+                particle.Location.Y = DrawBox.Height - particle.Radius;
             }
         }
 
@@ -155,21 +131,27 @@ namespace Particle_Collision
             return squareDistance <= ((p1.Radius + p2.Radius) * (p1.Radius + p2.Radius));
         }
 
-        void CheckForTerminalVelocity(ref Particle p)
+        void CheckForTerminalVelocity(Particle particle)
         {
-            if (Vector2.Abs(p.Velocity) > terminalSpeed)
+            Console.WriteLine($"{Vector2.Abs(particle.Velocity)}, x:{particle.Velocity.X}, y:{particle.Velocity.Y}");
+            if (Vector2.Abs(particle.Velocity) > terminalSpeed)
             {
-                p.Velocity *= 0;
+                double angle = Vector2.Arg(particle.Velocity);
+                particle.Velocity = new Vector2(terminalSpeed, angle, true);
             }
         }
 
         private void TickTimer_Tick(object sender, EventArgs e)
         {
-            UpdateParticlePosition();
-            UpdateParticleVelocity();
-            CheckForWallCollision();
-            CheckForCollsion();
+            for (int i = 0; i < particles.Count(); i++)
+            {
+                CheckForWallCollision(particles[i]);
+                particles[i].Update(gravity / (1000 / TickTimer.Interval));
+            }
+            CheckForCollsions();
             DrawParticles();
+            timerTicks++;
+            TimerTicksDisplay.Text = timerTicks.ToString();
         }
 
         private void TimerToggleButton_Click(object sender, EventArgs e)
@@ -190,9 +172,19 @@ namespace Particle_Collision
         {
             TickTimer.Stop();
             timerRunning = false;
+            TimerTicksDisplay.Text = "0";
+            timerTicks = 0;
             particles = new List<Particle>();
             AddParticles();
             DrawParticles();
+        }
+
+        private void ParticleEnvironment_SizeChanged(object sender, EventArgs e)
+        {
+
+            DrawBox.Size = new Size(this.Width - 107, this.Height - 39);
+            ButtonPanel.Location = new Point(DrawBox.Width + 6, ButtonPanel.Location.Y);
+            DrawBox.Image = new Bitmap(DrawBox.Width, DrawBox.Height);
         }
     }
 }

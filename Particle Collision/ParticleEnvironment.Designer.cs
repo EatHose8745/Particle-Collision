@@ -34,7 +34,10 @@ namespace Particle_Collision
             this.TickTimer = new System.Windows.Forms.Timer(this.components);
             this.TimerToggleButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
+            this.ButtonPanel = new System.Windows.Forms.Panel();
+            this.TimerTicksDisplay = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
+            this.ButtonPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // DrawBox
@@ -54,7 +57,7 @@ namespace Particle_Collision
             // 
             // TimerToggleButton
             // 
-            this.TimerToggleButton.Location = new System.Drawing.Point(806, 12);
+            this.TimerToggleButton.Location = new System.Drawing.Point(3, 3);
             this.TimerToggleButton.Name = "TimerToggleButton";
             this.TimerToggleButton.Size = new System.Drawing.Size(75, 35);
             this.TimerToggleButton.TabIndex = 1;
@@ -64,7 +67,7 @@ namespace Particle_Collision
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(806, 53);
+            this.ResetButton.Location = new System.Drawing.Point(3, 44);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(75, 35);
             this.ResetButton.TabIndex = 2;
@@ -72,21 +75,42 @@ namespace Particle_Collision
             this.ResetButton.UseVisualStyleBackColor = true;
             this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
+            // ButtonPanel
+            // 
+            this.ButtonPanel.Controls.Add(this.TimerToggleButton);
+            this.ButtonPanel.Controls.Add(this.ResetButton);
+            this.ButtonPanel.Location = new System.Drawing.Point(806, 12);
+            this.ButtonPanel.Name = "ButtonPanel";
+            this.ButtonPanel.Size = new System.Drawing.Size(81, 82);
+            this.ButtonPanel.TabIndex = 3;
+            // 
+            // TimerTicksDisplay
+            // 
+            this.TimerTicksDisplay.AutoSize = true;
+            this.TimerTicksDisplay.ForeColor = System.Drawing.Color.White;
+            this.TimerTicksDisplay.Location = new System.Drawing.Point(809, 125);
+            this.TimerTicksDisplay.Name = "TimerTicksDisplay";
+            this.TimerTicksDisplay.Size = new System.Drawing.Size(0, 13);
+            this.TimerTicksDisplay.TabIndex = 4;
+            // 
             // ParticleEnvironment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(891, 450);
-            this.Controls.Add(this.ResetButton);
-            this.Controls.Add(this.TimerToggleButton);
+            this.Controls.Add(this.TimerTicksDisplay);
+            this.Controls.Add(this.ButtonPanel);
             this.Controls.Add(this.DrawBox);
             this.Name = "ParticleEnvironment";
             this.ShowIcon = false;
             this.Text = "Environment";
             this.Load += new System.EventHandler(this.ParticleEnvironment_Load);
+            this.SizeChanged += new System.EventHandler(this.ParticleEnvironment_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).EndInit();
+            this.ButtonPanel.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -96,6 +120,8 @@ namespace Particle_Collision
         public System.Windows.Forms.Timer TickTimer;
         private System.Windows.Forms.Button TimerToggleButton;
         private System.Windows.Forms.Button ResetButton;
+        private System.Windows.Forms.Panel ButtonPanel;
+        private System.Windows.Forms.Label TimerTicksDisplay;
     }
 }
 
