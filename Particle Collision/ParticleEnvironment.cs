@@ -16,10 +16,13 @@ namespace Particle_Collision
 
         private bool timerRunning = true;
         private int timerTicks = 0;
-        private double gravity = 0;
+        private double gravity = 9.81;
         private double terminalSpeed = 10;
         private double wallHardness = 1;
-        private Random random = new Random("testseed".GetHashCode());
+        private double groundRoofHardness = 1;
+        private int randomParticlesNumber = 5;
+        private string randomSeed = "TestSeed";
+        private Random random;
 
         public ParticleEnvironment()
         {
@@ -28,14 +31,22 @@ namespace Particle_Collision
 
         private void ParticleEnvironment_Load(object sender, EventArgs e)
         {
+            InitiliseRandom(ref random, randomSeed);
             AddParticles();
             DrawBox.Image = new Bitmap(DrawBox.Width, DrawBox.Height);
+            TimerToggleButton.PerformClick();
+            DrawParticles();
+        }
+
+        void InitiliseRandom(ref Random random, string seed)
+        {
+            random = new Random(seed.GetHashCode());
         }
 
         void AddParticles()
         {
-            particles.Add(new Particle(new Vector2(this.Width / 2 - 250, this.Height / 2), new Vector2(1, 0), 20, 1, 1, Color.Green));
-            particles.Add(new Particle(new Vector2(this.Width / 2, this.Height / 2 - 10), new Vector2(-1, 0), 20, 1, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(this.Width / 2 - 100, this.Height / 2), new Vector2(1, 1), 20, 1, 1, Color.Green));
+            particles.Add(new Particle(new Vector2(this.Width / 2, this.Height / 2 - 10), new Vector2(-1, -1), 20, 1, 1, Color.Red));
         }
 
         void DrawParticles()
@@ -55,21 +66,14 @@ namespace Particle_Collision
             DrawBox.Invalidate();
         }
 
-        void CheckForCollsions()
+        bool CheckForCollsions(Particle particle1, Particle particle2)
         {
-            for (int i = 0; i < particles.Count(); i++)
+            if (CircleIntersect(particle1, particle2))
             {
-                Particle particle1 = particles[i];
-                for (int j = i + 1; j < particles.Count(); j++)
-                {
-                    Particle particle2 = particles[j];
-
-                    if (CircleIntersect(particle1, particle2))
-                    {
-                        CollideParticles(particle1, particle2);
-                    }
-                }
+                CollideParticles(particle1, particle2);
+                return true;
             }
+            return false;
         }
 
         void CollideParticles(Particle p1, Particle p2)
@@ -99,29 +103,32 @@ namespace Particle_Collision
 
         void CheckForWallCollision(Particle particle)
         {
-            double speedDampen = this.wallHardness;
+            double speedDampenWall = this.wallHardness;
+            double speedDampenGround = this.groundRoofHardness;
 
             if (particle.Location.X < particle.Radius)
             {
-                particle.Velocity.X = Math.Abs(particle.Velocity.X) * speedDampen;
+                particle.Velocity.X = Math.Abs(particle.Velocity.X) * speedDampenWall;
                 particle.Location.X = particle.Radius;
             }
             else if (particle.Location.X > DrawBox.Width - particle.Radius)
             {
-                particle.Velocity.X = -Math.Abs(particle.Velocity.X) * speedDampen;
+                particle.Velocity.X = -Math.Abs(particle.Velocity.X) * speedDampenWall;
                 particle.Location.X = DrawBox.Width - particle.Radius;
             }
 
             if (particle.Location.Y < particle.Radius)
             {
-                particle.Velocity.Y = Math.Abs(particle.Velocity.Y) * speedDampen;
+                particle.Velocity.Y = Math.Abs(particle.Velocity.Y) * speedDampenGround;
                 particle.Location.Y = particle.Radius;
             }
             else if (particle.Location.Y > DrawBox.Height - particle.Radius)
             {
-                particle.Velocity.Y = -Math.Abs(particle.Velocity.Y) * speedDampen;
+                particle.Velocity.Y = -Math.Abs(particle.Velocity.Y) * speedDampenGround;
                 particle.Location.Y = DrawBox.Height - particle.Radius;
             }
+
+            Console.WriteLine($"{Vector2.Abs(particle.Velocity)}, x: {particle.Velocity.X}, y:{particle.Velocity.Y}");
         }
 
         bool CircleIntersect(Particle p1, Particle p2)
@@ -146,9 +153,16 @@ namespace Particle_Collision
             for (int i = 0; i < particles.Count(); i++)
             {
                 CheckForWallCollision(particles[i]);
-                particles[i].Update(gravity / (1000 / TickTimer.Interval));
+                try
+                {
+                    for (int j = i + 1; j < particles.Count(); j++)
+                    {
+                        CheckForCollsions(particles[i], particles[j]);
+                    }
+                }
+                catch { }
+                particles[i].Update(gravity / (100 / TickTimer.Interval));
             }
-            CheckForCollsions();
             DrawParticles();
             timerTicks++;
             TimerTicksDisplay.Text = timerTicks.ToString();
@@ -172,10 +186,10 @@ namespace Particle_Collision
         {
             TickTimer.Stop();
             timerRunning = false;
+            InitiliseRandom(ref random, randomSeed);
             TimerTicksDisplay.Text = "0";
             timerTicks = 0;
             particles = new List<Particle>();
-            AddParticles();
             DrawParticles();
         }
 
@@ -185,6 +199,27 @@ namespace Particle_Collision
             DrawBox.Size = new Size(this.Width - 107, this.Height - 39);
             ButtonPanel.Location = new Point(DrawBox.Width + 6, ButtonPanel.Location.Y);
             DrawBox.Image = new Bitmap(DrawBox.Width, DrawBox.Height);
+        }
+
+        private void RandomButton_Click(object sender, EventArgs e)
+        {
+            TickTimer.Stop();
+            timerRunning = false;
+            TimerTicksDisplay.Text = "0";
+            timerTicks = 0;
+            particles = new List<Particle>();
+            for (int i = 0; i < randomParticlesNumber; i++)
+            {
+                Vector2 location = new Vector2(random.Next(DrawBox.Width), random.Next(DrawBox.Height));
+                Vector2 velocity = new Vector2(random.NextDouble() * random.Next(0, 2), random.NextDouble() * random.Next(0, 2));
+                double radius = random.Next(10, 31);
+                double mass = random.NextDouble() * random.Next(1, 31);
+                double hardness = random.NextDouble();
+                Color colour = Color.FromArgb(255, random.Next(0, 256), random.Next(0, 256), random.Next(0, 256));
+                particles.Add(new Particle(location, velocity, radius, mass, hardness, colour));
+                CheckForWallCollision(particles[i]);
+            }
+            DrawParticles();
         }
     }
 }
