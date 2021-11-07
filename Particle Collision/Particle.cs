@@ -28,9 +28,9 @@ namespace Particle_Collision
 
         public void Update(double gravity)
         {
-            this.Velocity.Y += gravity;
-
             this.Location += this.Velocity;
+
+            this.Velocity.Y += gravity;
         }
     }
 }
