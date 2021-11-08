@@ -35,8 +35,8 @@ namespace Particle_Collision
             this.TimerToggleButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.ButtonPanel = new System.Windows.Forms.Panel();
-            this.TimerTicksDisplay = new System.Windows.Forms.Label();
             this.RandomButton = new System.Windows.Forms.Button();
+            this.TimerTicksDisplay = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
             this.ButtonPanel.SuspendLayout();
             this.SuspendLayout();
@@ -90,15 +90,6 @@ namespace Particle_Collision
             this.ButtonPanel.Size = new System.Drawing.Size(81, 195);
             this.ButtonPanel.TabIndex = 3;
             // 
-            // TimerTicksDisplay
-            // 
-            this.TimerTicksDisplay.AutoSize = true;
-            this.TimerTicksDisplay.ForeColor = System.Drawing.Color.White;
-            this.TimerTicksDisplay.Location = new System.Drawing.Point(3, 123);
-            this.TimerTicksDisplay.Name = "TimerTicksDisplay";
-            this.TimerTicksDisplay.Size = new System.Drawing.Size(0, 13);
-            this.TimerTicksDisplay.TabIndex = 3;
-            // 
             // RandomButton
             // 
             this.RandomButton.ForeColor = System.Drawing.Color.Black;
@@ -109,6 +100,16 @@ namespace Particle_Collision
             this.RandomButton.Text = "Random";
             this.RandomButton.UseVisualStyleBackColor = true;
             this.RandomButton.Click += new System.EventHandler(this.RandomButton_Click);
+            // 
+            // TimerTicksDisplay
+            // 
+            this.TimerTicksDisplay.AutoSize = true;
+            this.TimerTicksDisplay.ForeColor = System.Drawing.Color.White;
+            this.TimerTicksDisplay.Location = new System.Drawing.Point(3, 123);
+            this.TimerTicksDisplay.Name = "TimerTicksDisplay";
+            this.TimerTicksDisplay.Size = new System.Drawing.Size(33, 13);
+            this.TimerTicksDisplay.TabIndex = 3;
+            this.TimerTicksDisplay.Text = "Ticks";
             // 
             // ParticleEnvironment
             // 
