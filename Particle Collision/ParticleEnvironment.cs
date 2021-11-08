@@ -17,10 +17,10 @@ namespace Particle_Collision
         private bool timerRunning = true;
         private int timerTicks = 0;
         private double gravity = 9.81;
-        private double terminalSpeed = 200;
-        private double wallHardness = 1;
-        private double groundRoofHardness = 1;
-        private int randomParticlesNumber = 200;
+        private double terminalSpeed = 10;
+        private double wallHardness = 0.8;
+        private double groundRoofHardness = 0.8;
+        private int randomParticlesNumber = 20;
         private string randomSeed = "Particle";
         private Random random;
 
@@ -97,10 +97,8 @@ namespace Particle_Collision
 
             double impulse = 2 * speed / (p1.Mass + p2.Mass);
 
-            p1.Velocity.X -= (impulse * p2.Mass * collisionVectorNorm.X);
-            p1.Velocity.Y -= (impulse * p2.Mass * collisionVectorNorm.Y);
-            p2.Velocity.X += (impulse * p1.Mass * collisionVectorNorm.X);
-            p2.Velocity.Y += (impulse * p1.Mass * collisionVectorNorm.Y);
+            p1.Velocity -= impulse * p2.Mass * collisionVectorNorm.X;
+            p2.Velocity += impulse * p1.Mass * collisionVectorNorm.X;
         }
 
         void CheckForWallCollision(Particle particle)
