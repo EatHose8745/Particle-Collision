@@ -13,15 +13,19 @@ namespace Particle_Collision
     public partial class ParticleEnvironment : Form
     {
         public List<Particle> particles = new List<Particle>();
+        private List<Particle> particlesWithGravity = new List<Particle>();
+
+        private double UniversalPullStrengthRatio = 1000;
 
         private bool timerRunning = true;
         private int timerTicks = 0;
-        private double gravity = 9.81;
-        private double terminalSpeed = 10;
-        private double wallHardness = 0.8;
-        private double groundRoofHardness = 0.8;
-        private int randomParticlesNumber = 20;
-        private string randomSeed = "Particle";
+        private double gravity = 0;
+        private double terminalSpeed = 1;
+        private bool autoSetTerminalSpeed = true;
+        private double wallHardness = 1;
+        private double groundRoofHardness = 1;
+        private int randomParticlesNumber = 200;
+        private string randomSeed = "TestSeed";
         private Random random;
 
         public ParticleEnvironment()
@@ -33,20 +37,26 @@ namespace Particle_Collision
         {
             InitiliseRandom(ref random, randomSeed);
             AddParticles();
+            InitiliseParticlesWithGravity();
             DrawBox.Image = new Bitmap(DrawBox.Width, DrawBox.Height);
+            SetTerminalVelocity();
             TimerToggleButton.PerformClick();
             DrawParticles();
         }
 
         void InitiliseRandom(ref Random random, string seed)
         {
-            random = new Random(seed.GetHashCode());
+            if (seed != "Random")
+                random = new Random(seed.GetHashCode());
+            else
+                random = new Random();
         }
 
         void AddParticles()
         {
-            particles.Add(new Particle(new Vector2(this.Width / 2 - 100, this.Height / 2), new Vector2(1, 1), 20, 1, 1, Color.Green));
-            particles.Add(new Particle(new Vector2(this.Width / 2, this.Height / 2 - 10), new Vector2(-1, -1), 20, 1, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 0, 20, 1, 1, Color.Green, false));
+            particles.Add(new Particle(new Vector2(30, 30), new Vector2(0, 0), 0, 20, 1, 1, Color.Red));
+            //particles.Add(new Particle(new Vector2(0, this.Height / 2), new Vector2(0, 0), 10, 0, 0, 0, Color.Transparent, true));
         }
 
         void DrawParticles()
@@ -58,7 +68,8 @@ namespace Particle_Collision
                 g.Clear(Color.White);
                 foreach (Particle p in particles)
                 {
-                    g.DrawEllipse(new Pen(p.Colour), (float)p.Location.X - (float)p.Radius, (float)p.Location.Y - (float)p.Radius, (float)p.Radius + (float)p.Radius, (float)p.Radius + (float)p.Radius);
+                    //g.DrawEllipse(new Pen(p.Colour), (float)p.Location.X - (float)p.Radius, (float)p.Location.Y - (float)p.Radius, (float)p.Radius + (float)p.Radius, (float)p.Radius + (float)p.Radius);
+                    g.FillEllipse(new SolidBrush(p.Colour), (float)p.Location.X - (float)p.Radius, (float)p.Location.Y - (float)p.Radius, (float)p.Radius + (float)p.Radius, (float)p.Radius + (float)p.Radius);
                     g.DrawLine(new Pen(Color.Black), (float)p.Location.X, (float)p.Location.Y, (float)p.Location.X + (float)p.Velocity.X, (float)p.Location.Y + (float)p.Velocity.Y);
                 }
             }
@@ -66,16 +77,38 @@ namespace Particle_Collision
             DrawBox.Invalidate();
         }
 
-        bool CheckForCollsions(Particle particle1, Particle particle2)
+        void SetTerminalVelocity()
+        {
+            if (autoSetTerminalSpeed)
+            {
+                double max = 0;
+                for (int i = 0; i < particles.Count(); i++)
+                {
+                    if (particles[i].Radius > max)
+                        max = particles[i].Radius;
+                }
+                this.terminalSpeed = max;
+            }
+        }
+
+        bool CheckForCollsions(Particle particle1, Particle particle2, bool apply = true)
         {
             if (CircleIntersect(particle1, particle2))
             {
-                CollideParticles(particle1, particle2);
-                CheckForTerminalVelocity(ref particle1);
-                CheckForTerminalVelocity(ref particle2);
+                if (apply)
+                {
+                    CollideParticles(particle1, particle2);
+                    CheckForTerminalVelocity(ref particle1);
+                    CheckForTerminalVelocity(ref particle2);
+                }
                 return true;
             }
             return false;
+        }
+
+        double ReturnRelativeParticleAngle(Particle p1, Particle p2)
+        {
+            return Math.Atan2(p2.Location.Y - p1.Location.Y, p2.Location.X - p1.Location.X);
         }
 
         void CollideParticles(Particle p1, Particle p2)
@@ -97,8 +130,21 @@ namespace Particle_Collision
 
             double impulse = 2 * speed / (p1.Mass + p2.Mass);
 
-            p1.Velocity -= impulse * p2.Mass * collisionVectorNorm.X;
-            p2.Velocity += impulse * p1.Mass * collisionVectorNorm.X;
+            if (!p1.IsStationary)
+                p1.Velocity -= impulse * p2.Mass * collisionVectorNorm.X;
+            if (!p2.IsStationary)
+                p2.Velocity += impulse * p1.Mass * collisionVectorNorm.X;
+        }
+
+        void InitiliseParticlesWithGravity()
+        {
+            for (int j = 0; j < particles.Count(); j++)
+            {
+                if (particles[j].PullAcceleration > 0)
+                {
+                    particlesWithGravity.Add(particles[j]);
+                }
+            }
         }
 
         void CheckForWallCollision(Particle particle)
@@ -133,11 +179,15 @@ namespace Particle_Collision
             Console.WriteLine($"{Vector2.Abs(particle.Velocity)}, x: {particle.Velocity.X}, y:{particle.Velocity.Y}");
         }
 
-        bool CircleIntersect(Particle p1, Particle p2)
+        bool CircleIntersect(Particle p1, Particle p2, bool includeEqual = true)
         {
             double squareDistance = (p1.Location.X - p2.Location.X) * (p1.Location.X - p2.Location.X) + (p1.Location.Y - p2.Location.Y) * (p1.Location.Y - p2.Location.Y);
 
-            return squareDistance <= ((p1.Radius + p2.Radius) * (p1.Radius + p2.Radius));
+            if (includeEqual)
+            {
+                return squareDistance <= ((p1.Radius + p2.Radius) * (p1.Radius + p2.Radius));
+            }
+            return squareDistance < ((p1.Radius + p2.Radius) * (p1.Radius + p2.Radius));
         }
 
         void CheckForTerminalVelocity(ref Particle particle)
@@ -146,7 +196,18 @@ namespace Particle_Collision
             if (terminalSpeed >= 0 && Vector2.Abs(particle.Velocity) > terminalSpeed)
             {
                 double angle = Vector2.Arg(particle.Velocity);
-                particle.Velocity = new Vector2(terminalSpeed, angle, true);
+                particle.Velocity = new Vector2(terminalSpeed, angle, false);
+            }
+        }
+
+        void CheckIfInGravitationalParticle(Particle p)
+        {
+            for (int i = 0; i < particlesWithGravity.Count(); i++)
+            {
+                if (p != particlesWithGravity[i] && CircleIntersect(p, particlesWithGravity[i]))
+                {
+                    particles.Remove(p);
+                }
             }
         }
 
@@ -163,7 +224,16 @@ namespace Particle_Collision
                     }
                 }
                 catch { }
-                particles[i].Update(gravity / (100 / TickTimer.Interval));
+                particles[i].Update(gravity: gravity * TickTimer.Interval / 60);
+                
+                for (int x = 0; x < particlesWithGravity.Count(); x++)
+                {
+                    if (!particles[i].IsStationary && particlesWithGravity[x] != particles[i])
+                    {
+                        particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
+                    }
+                }
+                CheckIfInGravitationalParticle(particles[i]);
             }
             DrawParticles();
             timerTicks++;
@@ -189,6 +259,8 @@ namespace Particle_Collision
             ResetTimer();
             InitiliseRandom(ref random, randomSeed);
             particles = new List<Particle>();
+            particlesWithGravity = new List<Particle>();
+            AddParticles();
             DrawParticles();
         }
 
@@ -212,10 +284,13 @@ namespace Particle_Collision
         {
             ResetTimer();
             particles = new List<Particle>();
+            particlesWithGravity = new List<Particle>();
             for (int i = 0; i < randomParticlesNumber; i++)
             {
                 Vector2 location = new Vector2(random.Next(DrawBox.Width), random.Next(DrawBox.Height));
                 Vector2 velocity = new Vector2(random.NextDouble() * random.Next(-10, 10), random.NextDouble() * random.Next(-10, 10));
+                //Vector2 velocity = new Vector2();
+                double pullAcceleration = 0;
                 //double radius = random.Next(10, 31);
                 double radius = 20;
                 //double mass = random.NextDouble() * random.Next(1, 31);
@@ -223,9 +298,11 @@ namespace Particle_Collision
                 //double hardness = random.NextDouble();
                 double hardness = 1;
                 Color colour = Color.FromArgb(255, random.Next(0, 256), random.Next(0, 256), random.Next(0, 256));
-                particles.Add(new Particle(location, velocity, radius, mass, hardness, colour));
+                particles.Add(new Particle(location, velocity, pullAcceleration, radius, mass, hardness, colour));
                 CheckForWallCollision(particles[i]);
             }
+            SetTerminalVelocity();
+            InitiliseParticlesWithGravity();
             DrawParticles();
         }
     }

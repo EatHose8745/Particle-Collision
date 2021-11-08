@@ -28,6 +28,11 @@ namespace Particle_Collision
             return Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
         }
 
+        public static double AbsPow2(Vector2 vector)
+        {
+            return vector.X * vector.X + vector.Y * vector.Y;
+        }
+
         public static double Arg(Vector2 vector)
         {
             return Math.Atan2(vector.Y, vector.X);
