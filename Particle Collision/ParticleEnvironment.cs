@@ -15,13 +15,13 @@ namespace Particle_Collision
         public List<Particle> particles = new List<Particle>();
         private List<Particle> particlesWithGravity = new List<Particle>();
 
-        private double UniversalPullStrengthRatio = 1000;
+        private const double G = 10;
 
         private bool timerRunning = true;
         private int timerTicks = 0;
         private double gravity = 0;
-        private double terminalSpeed = 1;
-        private bool autoSetTerminalSpeed = true;
+        private double terminalSpeed = -1;
+        private bool autoSetTerminalSpeed = false;
         private double wallHardness = 1;
         private double groundRoofHardness = 1;
         private int randomParticlesNumber = 200;
@@ -54,8 +54,8 @@ namespace Particle_Collision
 
         void AddParticles()
         {
-            particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 0, 20, 1, 1, Color.Green, false));
-            particles.Add(new Particle(new Vector2(30, 30), new Vector2(0, 0), 0, 20, 1, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 9.81, 20, 1, 1, Color.Green, false));
+            particles.Add(new Particle(new Vector2(30, 30), new Vector2(10, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(0, this.Height / 2), new Vector2(0, 0), 10, 0, 0, 0, Color.Transparent, true));
         }
 
@@ -195,8 +195,7 @@ namespace Particle_Collision
             //Console.WriteLine($"{Vector2.Abs(particle.Velocity)}, x:{particle.Velocity.X}, y:{particle.Velocity.Y}");
             if (terminalSpeed >= 0 && Vector2.Abs(particle.Velocity) > terminalSpeed)
             {
-                double angle = Vector2.Arg(particle.Velocity);
-                particle.Velocity = new Vector2(terminalSpeed, angle, false);
+                particle.Velocity.Absolute = terminalSpeed;
             }
         }
 
@@ -230,7 +229,8 @@ namespace Particle_Collision
                 {
                     if (!particles[i].IsStationary && particlesWithGravity[x] != particles[i])
                     {
-                        particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
+                        //particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Math.Pow(Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location), 2) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
+                        particles[i].Velocity += new Vector2(particlesWithGravity[x].PullAcceleration * ((G * particlesWithGravity[x].Mass) / (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location)) * (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
                     }
                 }
                 CheckIfInGravitationalParticle(particles[i]);

@@ -10,6 +10,9 @@ namespace Particle_Collision
     {
         public double X { get; set; }
         public double Y { get; set; }
+        public double Angle { get { return Arg(this); } set { this.X = this.Absolute * Math.Cos(value); this.Y = this.Absolute * Math.Sin(value); } }
+        public double Absolute { get { return Abs(this); } set { this.X = value * Math.Cos(Angle); this.Y = value * Math.Sin(Angle); } }
+        public double AbsoluteSquared { get { return AbsPow2(this); } }
 
         public Vector2(double x = 0, double y = 0)
         {
@@ -36,6 +39,11 @@ namespace Particle_Collision
         public static double Arg(Vector2 vector)
         {
             return Math.Atan2(vector.Y, vector.X);
+        }
+
+        public static double AbsoluteDifference(Vector2 a, Vector2 b)
+        {
+            return Abs(a - b);
         }
 
         public static Vector2 operator +(Vector2 a, Vector2 b) => new Vector2(a.X + b.X, a.Y + b.Y);

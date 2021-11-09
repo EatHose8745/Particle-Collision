@@ -17,3 +17,4 @@ C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\De
 C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CoreCompileInputs.cache
 C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.exe
 C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.pdb
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.AssemblyReference.cache
