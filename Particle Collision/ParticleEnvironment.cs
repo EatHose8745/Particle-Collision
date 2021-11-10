@@ -19,9 +19,9 @@ namespace Particle_Collision
 
         private bool timerRunning = true;
         private int timerTicks = 0;
-        private double gravity = 0;
+        private double gravity = 9.81;
         private double terminalSpeed = -1;
-        private bool autoSetTerminalSpeed = false;
+        private bool autoSetTerminalSpeed = true;
         private double wallHardness = 1;
         private double groundRoofHardness = 1;
         private int randomParticlesNumber = 200;
@@ -54,8 +54,11 @@ namespace Particle_Collision
 
         void AddParticles()
         {
-            particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 9.81, 20, 1, 1, Color.Green, false));
-            particles.Add(new Particle(new Vector2(30, 30), new Vector2(10, 0), 0, 20, 1, 1, Color.Red));
+            //particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 0, 20, 1000000, 1, Color.Green, false));
+            particles.Add(new Particle(new Vector2(600, 400), new Vector2(0, 5), 0, 20, 10, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(600, 500), new Vector2(0, -5), 0, 20, 1, 1, Color.Red));
+            //particles.Add(new Particle(new Vector2(600, 300), new Vector2(-5, 0), 0, 20, 1, 1, Color.Red));
+            //particles.Add(new Particle(new Vector2(400, 300), new Vector2(5, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(0, this.Height / 2), new Vector2(0, 0), 10, 0, 0, 0, Color.Transparent, true));
         }
 
@@ -131,9 +134,13 @@ namespace Particle_Collision
             double impulse = 2 * speed / (p1.Mass + p2.Mass);
 
             if (!p1.IsStationary)
-                p1.Velocity -= impulse * p2.Mass * collisionVectorNorm.X;
+            {
+                p1.Velocity -= impulse * p2.Mass * collisionVectorNorm;
+            }
             if (!p2.IsStationary)
-                p2.Velocity += impulse * p1.Mass * collisionVectorNorm.X;
+            {
+                p2.Velocity += impulse * p1.Mass * collisionVectorNorm;
+            }
         }
 
         void InitiliseParticlesWithGravity()
@@ -195,7 +202,7 @@ namespace Particle_Collision
             //Console.WriteLine($"{Vector2.Abs(particle.Velocity)}, x:{particle.Velocity.X}, y:{particle.Velocity.Y}");
             if (terminalSpeed >= 0 && Vector2.Abs(particle.Velocity) > terminalSpeed)
             {
-                particle.Velocity.Absolute = terminalSpeed;
+                particle.Velocity = new Vector2(terminalSpeed, Vector2.Arg(particle.Velocity), false);
             }
         }
 
@@ -230,7 +237,7 @@ namespace Particle_Collision
                     if (!particles[i].IsStationary && particlesWithGravity[x] != particles[i])
                     {
                         //particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Math.Pow(Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location), 2) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
-                        particles[i].Velocity += new Vector2(particlesWithGravity[x].GravitationalMultiple * ((G * particlesWithGravity[x].Mass) / (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location)) * (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
+                        particles[i].Velocity += new Vector2(particlesWithGravity[x].GravitationalMultiple * (G * particlesWithGravity[x].Mass / (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location)) * (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
                     }
                 }
                 CheckIfInGravitationalParticle(particles[i]);

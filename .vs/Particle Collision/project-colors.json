@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "6b98552a-2e73-4445-94f3-784e738f12e9": {
+      "ProjectGuid": "6b98552a-2e73-4445-94f3-784e738f12e9",
+      "DisplayName": "Particle Collision",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
