@@ -11,7 +11,7 @@ namespace Particle_Collision
     {
         public Vector2 Location { get; set; }
         public Vector2 Velocity { get; set; }
-        public double PullAcceleration { get; set; }
+        public double GravitationalMultiple { get; set; }
         public double Radius { get; set; }
         public double Mass { get; set; }
         public double Hardness { get; set; }
@@ -19,11 +19,11 @@ namespace Particle_Collision
         public bool IsStationary { get; set; }
         public Particle FutureParticle { get { return Update(apply: false); } }
 
-        public Particle(Vector2 location, Vector2 velocity, double pullAcceleration, double radius, double mass, double hardness, Color colour, bool isStationary = false)
+        public Particle(Vector2 location, Vector2 velocity, double gravitationalMultiple, double radius, double mass, double hardness, Color colour, bool isStationary = false)
         {
             this.Location = location;
             this.Velocity = velocity;
-            this.PullAcceleration = pullAcceleration;
+            this.GravitationalMultiple = gravitationalMultiple;
             this.Radius = radius;
             this.Mass = mass;
             this.Hardness = hardness;
@@ -39,7 +39,7 @@ namespace Particle_Collision
                 this.Velocity.Y += gravity;
                 return null;
             }
-            return new Particle(this.Location + this.Velocity, new Vector2(this.Velocity.X, this.Velocity.Y + gravity), this.PullAcceleration, this.Radius, this.Mass, this.Hardness, this.Colour, this.IsStationary);
+            return new Particle(this.Location + this.Velocity, new Vector2(this.Velocity.X, this.Velocity.Y + gravity), this.GravitationalMultiple, this.Radius, this.Mass, this.Hardness, this.Colour, this.IsStationary);
         }
     }
 }

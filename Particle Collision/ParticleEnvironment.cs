@@ -140,7 +140,7 @@ namespace Particle_Collision
         {
             for (int j = 0; j < particles.Count(); j++)
             {
-                if (particles[j].PullAcceleration > 0)
+                if (particles[j].GravitationalMultiple > 0)
                 {
                     particlesWithGravity.Add(particles[j]);
                 }
@@ -230,7 +230,7 @@ namespace Particle_Collision
                     if (!particles[i].IsStationary && particlesWithGravity[x] != particles[i])
                     {
                         //particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Math.Pow(Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location), 2) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
-                        particles[i].Velocity += new Vector2(particlesWithGravity[x].PullAcceleration * ((G * particlesWithGravity[x].Mass) / (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location)) * (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
+                        particles[i].Velocity += new Vector2(particlesWithGravity[x].GravitationalMultiple * ((G * particlesWithGravity[x].Mass) / (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location)) * (Vector2.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
                     }
                 }
                 CheckIfInGravitationalParticle(particles[i]);
