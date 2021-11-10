@@ -19,9 +19,9 @@ namespace Particle_Collision
 
         private bool timerRunning = true;
         private int timerTicks = 0;
-        private double gravity = 9.81;
+        private double gravity = 0;
         private double terminalSpeed = -1;
-        private bool autoSetTerminalSpeed = true;
+        private bool autoSetTerminalSpeed = false;
         private double wallHardness = 1;
         private double groundRoofHardness = 1;
         private int randomParticlesNumber = 200;
@@ -55,8 +55,8 @@ namespace Particle_Collision
         void AddParticles()
         {
             //particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 0, 20, 1000000, 1, Color.Green, false));
-            particles.Add(new Particle(new Vector2(600, 400), new Vector2(0, 5), 0, 20, 10, 1, Color.Red));
-            particles.Add(new Particle(new Vector2(600, 500), new Vector2(0, -5), 0, 20, 1, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(600, 400), new Vector2(10, 0), 0, 20, 10, 1, Color.Red));
+            particles.Add(new Particle(new Vector2(800, 800), new Vector2(0, 0), 900, 20, 1, 1, Color.Red, true));
             //particles.Add(new Particle(new Vector2(600, 300), new Vector2(-5, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(400, 300), new Vector2(5, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(0, this.Height / 2), new Vector2(0, 0), 10, 0, 0, 0, Color.Transparent, true));

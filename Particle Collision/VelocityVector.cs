@@ -10,6 +10,8 @@ namespace Particle_Collision
     {
         public double X { get; set; }
         public double Y { get; set; }
+        public double Absolute { get { { return Abs(this); } } }
+        public double Angle { get { return Arg(this); } set { double abs = this.Absolute; this.X = abs * Math.Cos(value); this.Y = abs * Math.Sin(value); } }
 
         public Vector2(double x = 0, double y = 0)
         {
