@@ -9,17 +9,18 @@ namespace Particle_Collision
 {
     public class Particle
     {
-        public Vector2 Location { get; set; }
-        public Vector2 Velocity { get; set; }
+        public Vector2D Location { get; set; }
+        public Vector2D Velocity { get; set; }
         public double GravitationalMultiple { get; set; }
         public double Radius { get; set; }
         public double Mass { get; set; }
         public double Hardness { get; set; }
         public Color Colour { get; set; }
         public bool IsStationary { get; set; }
-        public Particle FutureParticle { get { return Update(apply: false); } }
+        public bool Infected { get; set; }
+        public Particle FutureParticle { get { return Update(applyExisting: false); } }
 
-        public Particle(Vector2 location, Vector2 velocity, double gravitationalMultiple, double radius, double mass, double hardness, Color colour, bool isStationary = false)
+        public Particle(Vector2D location, Vector2D velocity, double gravitationalMultiple, double radius, double mass, double hardness, Color colour, bool infected = false, bool isStationary = false)
         {
             this.Location = location;
             this.Velocity = velocity;
@@ -28,18 +29,19 @@ namespace Particle_Collision
             this.Mass = mass;
             this.Hardness = hardness;
             this.Colour = colour;
+            this.Infected = infected;
             this.IsStationary = isStationary;
         }
 
-        public Particle Update(double gravity = 0, bool apply = true)
+        public Particle Update(double gravity = 0, bool applyExisting = true)
         {
-            if (apply)
+            if (applyExisting)
             {
                 this.Location += this.Velocity;
                 this.Velocity.Y += gravity;
                 return null;
             }
-            return new Particle(this.Location + this.Velocity, new Vector2(this.Velocity.X, this.Velocity.Y + gravity), this.GravitationalMultiple, this.Radius, this.Mass, this.Hardness, this.Colour, this.IsStationary);
+            return new Particle(this.Location + this.Velocity, new Vector2D(this.Velocity.X, this.Velocity.Y + gravity), this.GravitationalMultiple, this.Radius, this.Mass, this.Hardness, this.Colour, this.IsStationary);
         }
     }
 }

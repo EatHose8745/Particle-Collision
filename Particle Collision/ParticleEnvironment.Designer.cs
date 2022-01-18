@@ -35,6 +35,9 @@ namespace Particle_Collision
             this.TimerToggleButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.ButtonPanel = new System.Windows.Forms.Panel();
+            this.WindowRadio = new System.Windows.Forms.RadioButton();
+            this.NoneRadio = new System.Windows.Forms.RadioButton();
+            this.BorderRadio = new System.Windows.Forms.RadioButton();
             this.RandomButton = new System.Windows.Forms.Button();
             this.TimerTicksDisplay = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
@@ -49,6 +52,12 @@ namespace Particle_Collision
             this.DrawBox.Size = new System.Drawing.Size(800, 450);
             this.DrawBox.TabIndex = 0;
             this.DrawBox.TabStop = false;
+            this.DrawBox.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawBox_Paint);
+            this.DrawBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DrawBox_MouseClick);
+            this.DrawBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.DrawBox_MouseDoubleClick);
+            this.DrawBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawBox_MouseDown);
+            this.DrawBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawBox_MouseMove);
+            this.DrawBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawBox_MouseUp);
             // 
             // TickTimer
             // 
@@ -80,15 +89,59 @@ namespace Particle_Collision
             // 
             // ButtonPanel
             // 
+            this.ButtonPanel.Controls.Add(this.WindowRadio);
+            this.ButtonPanel.Controls.Add(this.NoneRadio);
+            this.ButtonPanel.Controls.Add(this.BorderRadio);
             this.ButtonPanel.Controls.Add(this.RandomButton);
             this.ButtonPanel.Controls.Add(this.TimerTicksDisplay);
             this.ButtonPanel.Controls.Add(this.TimerToggleButton);
             this.ButtonPanel.Controls.Add(this.ResetButton);
             this.ButtonPanel.ForeColor = System.Drawing.Color.Black;
-            this.ButtonPanel.Location = new System.Drawing.Point(806, 12);
+            this.ButtonPanel.Location = new System.Drawing.Point(806, 0);
             this.ButtonPanel.Name = "ButtonPanel";
-            this.ButtonPanel.Size = new System.Drawing.Size(81, 195);
+            this.ButtonPanel.Size = new System.Drawing.Size(81, 450);
             this.ButtonPanel.TabIndex = 3;
+            // 
+            // WindowRadio
+            // 
+            this.WindowRadio.AutoSize = true;
+            this.WindowRadio.ForeColor = System.Drawing.Color.White;
+            this.WindowRadio.Location = new System.Drawing.Point(3, 335);
+            this.WindowRadio.Name = "WindowRadio";
+            this.WindowRadio.Size = new System.Drawing.Size(64, 17);
+            this.WindowRadio.TabIndex = 7;
+            this.WindowRadio.Tag = "Radio";
+            this.WindowRadio.Text = "Window";
+            this.WindowRadio.UseVisualStyleBackColor = true;
+            this.WindowRadio.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
+            // 
+            // NoneRadio
+            // 
+            this.NoneRadio.AutoSize = true;
+            this.NoneRadio.Checked = true;
+            this.NoneRadio.ForeColor = System.Drawing.Color.White;
+            this.NoneRadio.Location = new System.Drawing.Point(3, 289);
+            this.NoneRadio.Name = "NoneRadio";
+            this.NoneRadio.Size = new System.Drawing.Size(51, 17);
+            this.NoneRadio.TabIndex = 6;
+            this.NoneRadio.TabStop = true;
+            this.NoneRadio.Tag = "Radio";
+            this.NoneRadio.Text = "None";
+            this.NoneRadio.UseVisualStyleBackColor = true;
+            this.NoneRadio.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
+            // 
+            // BorderRadio
+            // 
+            this.BorderRadio.AutoSize = true;
+            this.BorderRadio.ForeColor = System.Drawing.Color.White;
+            this.BorderRadio.Location = new System.Drawing.Point(3, 312);
+            this.BorderRadio.Name = "BorderRadio";
+            this.BorderRadio.Size = new System.Drawing.Size(56, 17);
+            this.BorderRadio.TabIndex = 5;
+            this.BorderRadio.Tag = "Radio";
+            this.BorderRadio.Text = "Border";
+            this.BorderRadio.UseVisualStyleBackColor = true;
+            this.BorderRadio.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // RandomButton
             // 
@@ -105,7 +158,7 @@ namespace Particle_Collision
             // 
             this.TimerTicksDisplay.AutoSize = true;
             this.TimerTicksDisplay.ForeColor = System.Drawing.Color.White;
-            this.TimerTicksDisplay.Location = new System.Drawing.Point(3, 123);
+            this.TimerTicksDisplay.Location = new System.Drawing.Point(3, 252);
             this.TimerTicksDisplay.Name = "TimerTicksDisplay";
             this.TimerTicksDisplay.Size = new System.Drawing.Size(33, 13);
             this.TimerTicksDisplay.TabIndex = 3;
@@ -116,11 +169,12 @@ namespace Particle_Collision
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(891, 450);
+            this.ClientSize = new System.Drawing.Size(887, 450);
             this.Controls.Add(this.ButtonPanel);
             this.Controls.Add(this.DrawBox);
             this.Name = "ParticleEnvironment";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Environment";
             this.Load += new System.EventHandler(this.ParticleEnvironment_Load);
             this.SizeChanged += new System.EventHandler(this.ParticleEnvironment_SizeChanged);
@@ -140,6 +194,9 @@ namespace Particle_Collision
         private System.Windows.Forms.Panel ButtonPanel;
         private System.Windows.Forms.Label TimerTicksDisplay;
         private System.Windows.Forms.Button RandomButton;
+        private System.Windows.Forms.RadioButton BorderRadio;
+        private System.Windows.Forms.RadioButton NoneRadio;
+        private System.Windows.Forms.RadioButton WindowRadio;
     }
 }
 

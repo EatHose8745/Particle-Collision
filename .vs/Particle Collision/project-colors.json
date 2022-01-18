@@ -5,6 +5,11 @@
       "ProjectGuid": "6b98552a-2e73-4445-94f3-784e738f12e9",
       "DisplayName": "Particle Collision",
       "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
   "NextColorIndex": 1

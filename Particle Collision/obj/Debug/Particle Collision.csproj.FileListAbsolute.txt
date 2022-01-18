@@ -8,16 +8,6 @@ C:\Users\Joel\Documents\C# Projects\Particle Collision\Particle Collision\obj\De
 C:\Users\Joel\Documents\C# Projects\Particle Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CoreCompileInputs.cache
 C:\Users\Joel\Documents\C# Projects\Particle Collision\Particle Collision\obj\Debug\Particle Collision.exe
 C:\Users\Joel\Documents\C# Projects\Particle Collision\Particle Collision\obj\Debug\Particle Collision.pdb
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe.config
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.pdb
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle_Collision.ParticleEnvironment.resources
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle_Collision.Properties.Resources.resources
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.GenerateResource.cache
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CoreCompileInputs.cache
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.exe
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.pdb
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.SuggestedBindingRedirects.cache
 S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe.config
 S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe
 S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.pdb
@@ -27,3 +17,14 @@ S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Parti
 S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CoreCompileInputs.cache
 S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.exe
 S:\Subject Folders\A-Level Computer Science\Programming\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.pdb
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.SuggestedBindingRedirects.cache
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle_Collision.ParticleEnvironment.resources
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle_Collision.Properties.Resources.resources
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.GenerateResource.cache
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CoreCompileInputs.cache
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe.config
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.pdb
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.exe
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.pdb
+C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle_Collision.InputBox.resources
