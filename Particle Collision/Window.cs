@@ -11,6 +11,12 @@ namespace Particle_Collision
     {
         public bool Closed { get; set; }
         public double PullMultiple { get; set; }
+        public double Range { get; set; }
+
+        public int LargestDimention
+        {
+            get { return Math.Max(Width, Height); }
+        }
 
         public Window(int x, int y, int width, int height, double pullMultiple, Color c, bool closed = false) : base(x, y, width, height, c, closed)
         {

@@ -8,17 +8,25 @@ namespace Particle_Collision
 {
     public partial class ParticleEnvironment : Form
     {
-        public List<Particle> particles = new List<Particle>();
+        KD_Node KDTree = new KD_Node();
+
+        private List<Particle> particlesReturn = new List<Particle>();
+        public List<Particle> Particles = new List<Particle>();
+        
         private List<Particle> particlesWithGravity = new List<Particle>();
 
         public List<Border> Borders = new List<Border>();
         public List<Window> Windows = new List<Window>();
+        public List<Spawner> Spawners = new List<Spawner>();
 
         private int bordersIndex = 0;
         private Border nullBorder = null;
 
         private int windowsIndex = 0;
         private Window nullWindow = null;
+
+        private int spawnersIndex = 0;
+        private Spawner nullSpawner = null;
 
         private bool isDrawing = false;
         private string selectedRadio = "NoneRadio";
@@ -62,11 +70,26 @@ namespace Particle_Collision
         void AddParticles()
         {
             //particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 0, 20, 1000000, 1, Color.Green, false));
-            particles.Add(new Particle(new Vector2D(50, 50), new Vector2D(10, 0), 0, 20, 10, 1, Color.Red));
-            particles.Add(new Particle(new Vector2D(200, 200), new Vector2D(0, 0), 0, 20, 10, 1, Color.Blue, false, true));
+            AppendParticle(new Particle(new Vector2D(7, 2), new Vector2D(10, 0), 0, 20, 10, 1));
+            AppendParticle(new Particle(new Vector2D(5, 4), new Vector2D(10, 0), 0, 20, 10, 1));
+            AppendParticle(new Particle(new Vector2D(9, 6), new Vector2D(10, 0), 0, 20, 10, 1));
+            AppendParticle(new Particle(new Vector2D(4, 7), new Vector2D(10, 0), 0, 20, 10, 1));
+            AppendParticle(new Particle(new Vector2D(8, 1), new Vector2D(10, 0), 0, 20, 10, 1));
+            AppendParticle(new Particle(new Vector2D(2, 3), new Vector2D(10, 0), 0, 20, 10, 1));
+            //particles.Add(new Particle(new Vector2D(200, 200), new Vector2D(0, 0), 0, 20, 10, 1, Color.Blue, false, true));
             //particles.Add(new Particle(new Vector2(600, 300), new Vector2(-5, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(400, 300), new Vector2(5, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(0, this.Height / 2), new Vector2(0, 0), 10, 0, 0, 0, Color.Transparent, true));
+        }
+
+        private void AppendParticle(Particle p)
+        {
+            Particles.Add(p);
+        }
+
+        private void RemoveParticle(Particle p)
+        {
+            Particles.Remove(p);
         }
 
         void SetTerminalVelocity()
@@ -74,10 +97,10 @@ namespace Particle_Collision
             if (autoSetTerminalSpeed)
             {
                 double max = 0;
-                for (int i = 0; i < particles.Count; i++)
+                for (int i = 0; i < Particles.Count; i++)
                 {
-                    if (particles[i].Radius > max)
-                        max = particles[i].Radius;
+                    if (Particles[i].Radius > max)
+                        max = Particles[i].Radius;
                 }
                 this.terminalSpeed = max;
             }
@@ -106,6 +129,12 @@ namespace Particle_Collision
         void CollideParticles(Particle p1, Particle p2)
         {
             //https://spicyyoghurt.com/tutorials/html5-javascript-game-development/collision-detection-physics
+
+            if (p1.Infected || p2.Infected)
+            {
+                p1.Infected = true;
+                p2.Infected = true;
+            }    
 
             Vector2D collisionVector = new Vector2D(p2.Location.X - p1.Location.X, p2.Location.Y - p1.Location.Y);
             double distance = Math.Sqrt((p2.Location.X - p1.Location.X) * (p2.Location.X - p1.Location.X) + (p2.Location.Y - p1.Location.Y) * (p2.Location.Y - p1.Location.Y));
@@ -136,11 +165,11 @@ namespace Particle_Collision
 
         void InitiliseParticlesWithGravity()
         {
-            for (int j = 0; j < particles.Count; j++)
+            for (int j = 0; j < Particles.Count; j++)
             {
-                if (particles[j].GravitationalMultiple > 0)
+                if (Particles[j].GravitationalMultiple > 0)
                 {
-                    particlesWithGravity.Add(particles[j]);
+                    particlesWithGravity.Add(Particles[j]);
                 }
             }
         }
@@ -244,7 +273,7 @@ namespace Particle_Collision
             {
                 if (p != particlesWithGravity[i] && CircleIntersect(p, particlesWithGravity[i]))
                 {
-                    particles.Remove(p);
+                    RemoveParticle(p);
                 }
             }
         }
@@ -266,12 +295,12 @@ namespace Particle_Collision
                 {
                     if (p.Location.X + p.Radius > minX && p.Location.X < maxX)
                     {
-                        particles.Remove(p);
+                        RemoveParticle(p);
                         continue;
                     }
                     else if (p.Location.X - p.Radius < maxX && p.Location.X > minX)
                     {
-                        particles.Remove(p);
+                        RemoveParticle(p);
                         continue;
                     }
                 }
@@ -280,12 +309,12 @@ namespace Particle_Collision
                 {
                     if (p.Location.Y + p.Radius > minY && p.Location.Y < maxY)
                     {
-                        particles.Remove(p);
+                        RemoveParticle(p);
                         continue;
                     }
                     else if (p.Location.Y - p.Radius < maxY && p.Location.Y > minY)
                     {
-                        particles.Remove(p);
+                        RemoveParticle(p);
                         continue;
                     }
                 }
@@ -294,38 +323,47 @@ namespace Particle_Collision
 
         private void TickTimer_Tick(object sender, EventArgs e)
         {
-            for (int i = 0; i < particles.Count; i++)
+            for (int i = 0; i < Spawners.Count; i++)
             {
-                
+                if (timerTicks % Spawners[i].Frequency == 0)
+                {
+                    bool infectious = Spawners[i].Colour == Color.Red ? true : false;
+                    AppendParticle(new Particle(Spawners[i].Location, Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(100), random.NextDouble() * Spawners[i].Angle + Spawners[i].Offset), 0, 10, 1, 1, infectious));
+                }
+            }
+            for (int i = 0; i < Particles.Count; i++)
+            {
                 for (int x = 0; x < particlesWithGravity.Count; x++)
                 {
-                    if (!particles[i].IsStationary && particlesWithGravity[x] != particles[i])
+                    if (!Particles[i].IsStationary && particlesWithGravity[x] != Particles[i])
                     {
                         //particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Math.Pow(Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location), 2) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
-                        particles[i].Velocity += Vector2D.FromSpeedAngle(particlesWithGravity[x].GravitationalMultiple * (G * particlesWithGravity[x].Mass / (Vector2D.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location)) * (Vector2D.AbsoluteDifference(particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]));
+                        Particles[i].Velocity += Vector2D.FromSpeedAngle(particlesWithGravity[x].GravitationalMultiple * (G * particlesWithGravity[x].Mass / (Vector2D.AbsoluteDifference(Particles[i].Location, particlesWithGravity[x].Location)) * (Vector2D.AbsoluteDifference(Particles[i].Location, particlesWithGravity[x].Location))) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(Particles[i], particlesWithGravity[x]));
                     }
                 }
                 for (int x = 0; x < Windows.Count; x++)
                 {
-                    if (!(particles[i].IsStationary || Windows[x].Closed))
+                    if (!(Particles[i].IsStationary || Windows[x].Closed || Vector2D.AbsoluteDifference(Particles[i].Location, Windows[x].Location) > Windows[x].LargestDimention + Windows[x].Range))
                     {
                         //particles[i].Velocity += new Vector2(((particlesWithGravity[x].PullAcceleration / particles[i].Mass) / (Math.Pow(Vector2.Abs(particles[i].Location - particlesWithGravity[x].Location), 2) / UniversalPullStrengthRatio)) * TickTimer.Interval / 60, ReturnRelativeParticleAngle(particles[i], particlesWithGravity[x]), false);
-                        particles[i].Velocity += Vector2D.FromSpeedAngle(Windows[x].PullMultiple * (G * Windows[x].Mass / (Vector2D.AbsoluteDifference(particles[i].Location, Windows[x].Location)) * (Vector2D.AbsoluteDifference(particles[i].Location, Windows[x].Location))) * TickTimer.Interval / 60, Vector2D.ReturnRelativeAngle(particles[i].Location, Windows[x].Location));
+                        Particles[i].Velocity += Vector2D.FromSpeedAngle(Windows[x].PullMultiple * (G * Windows[x].Mass / (Vector2D.AbsoluteDifference(Particles[i].Location, Windows[x].Location)) * (Vector2D.AbsoluteDifference(Particles[i].Location, Windows[x].Location))) * TickTimer.Interval / 60, Vector2D.ReturnRelativeAngle(Particles[i].Location, Windows[x].Location));
                     }
                 }
-                if (!particles[i].IsStationary)
-                    particles[i].Update(gravity: gravity * TickTimer.Interval / 60);
-                if (particles.Count > 1)
+                if (!Particles[i].IsStationary)
+                    Particles[i].Update(gravity: gravity * TickTimer.Interval / 60);
+                if (Particles.Count > 1)
                 {
-                    for (int j = i + 1; j < particles.Count; j++)
+                    for (int j = i + 1; j < Particles.Count; j++)
                     {
-                        CheckForCollsions(particles[i], particles[j]);
+                        CheckForCollsions(Particles[i], Particles[j]);
                     }
+
+                    //CheckForCollsions(Particles[i], Particles.Find(p => p.Location == KD_Tree.NearestNeighbour(KDTree, Particles[i].Location, 0).Location));
                 }
-                CheckIfInGravitationalParticle(particles[i]);
-                CheckForBorderIntersect(particles[i]);
-                CheckForWallCollision(particles[i]);
-                CheckIfInWindow(particles[i]);
+                CheckIfInGravitationalParticle(Particles[i]);
+                CheckForBorderIntersect(Particles[i]);
+                CheckForWallCollision(Particles[i]);
+                CheckIfInWindow(Particles[i]);
             }
             timerTicks++;
             TimerTicksDisplay.Text = timerTicks.ToString();
@@ -350,12 +388,14 @@ namespace Particle_Collision
         {
             ResetTimer();
             InitiliseRandom(ref random, randomSeed);
-            particles.Clear();
+            Particles.Clear();
             particlesWithGravity.Clear();
             bordersIndex = 0;
             windowsIndex = 0;
+            spawnersIndex = 0;
             Borders.Clear();
             Windows.Clear();
+            Spawners.Clear();
             AddParticles();
             InitiliseParticlesWithGravity();
             GC.Collect();
@@ -381,12 +421,14 @@ namespace Particle_Collision
         private void RandomButton_Click(object sender, EventArgs e)
         {
             ResetTimer();
-            particles = new List<Particle>();
+            Particles = new List<Particle>();
             particlesWithGravity = new List<Particle>();
             Borders = new List<Border>();
             Windows = new List<Window>();
+            Spawners = new List<Spawner>();
             bordersIndex = 0;
             windowsIndex = 0;
+            spawnersIndex = 0;
             for (int i = 0; i < randomParticlesNumber; i++)
             {
                 Vector2D location = new Vector2D(random.Next(DrawBox.Width), random.Next(DrawBox.Height));
@@ -399,19 +441,20 @@ namespace Particle_Collision
                 double mass = 1;
                 //double hardness = random.NextDouble();
                 double hardness = 1;
-                Color colour = Color.FromArgb(255, random.Next(0, 256), random.Next(0, 256), random.Next(0, 256));
-                particles.Add(new Particle(location, velocity, pullAcceleration, radius, mass, hardness, colour));
-                CheckForWallCollision(particles[i]);
+                Color colour = Color.FromArgb(255, random.Next(256), random.Next(256), random.Next(256));
+                AppendParticle(new Particle(location, velocity, pullAcceleration, radius, mass, hardness));
+                CheckForWallCollision(Particles[i]);
             }
             SetTerminalVelocity();
             InitiliseParticlesWithGravity();
+            
             DrawBox.Refresh();
         }
 
         private void DrawBox_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
-            foreach (Particle p in particles)
+            foreach (Particle p in Particles)
             {
                 e.Graphics.FillEllipse(new SolidBrush(p.Colour), (float)p.Location.X - (float)p.Radius, (float)p.Location.Y - (float)p.Radius, (float)p.Radius + (float)p.Radius, (float)p.Radius + (float)p.Radius);
                 e.Graphics.DrawLine(new Pen(Color.Black), (float)p.Location.X, (float)p.Location.Y, (float)p.Location.X + (float)p.Velocity.X, (float)p.Location.Y + (float)p.Velocity.Y);
@@ -439,6 +482,10 @@ namespace Particle_Collision
                     e.Graphics.DrawLine(new Pen(w.Colour), (float)w.Start.X, (float)w.End.Y, (float)w.End.X, (float)w.Start.Y);
                 }
             }
+            foreach (Spawner s in Spawners)
+            {
+                e.Graphics.FillEllipse(new SolidBrush(s.Colour), (float)s.Location.X, (float)s.Location.Y, (float)5, (float)5);
+            }
         }
 
         private void DrawBox_MouseDown(object sender, MouseEventArgs e)
@@ -460,6 +507,21 @@ namespace Particle_Collision
                     nullWindow.Mass = 1;
                     Windows.Add(nullWindow);
                     break;
+                case "SpawnerRadio":
+                    nullSpawner = new Spawner(e.Location.X, e.Location.Y, Color.Black);
+                    InputBox spawnerConfig = new InputBox("Offset:", "Angle:", "Frequency:");
+                    spawnerConfig.ShowDialog();
+                    nullSpawner.Angle = double.TryParse(spawnerConfig.Input2String, out _) ? double.Parse(spawnerConfig.Input2String) * (Math.PI / 180) : 2 * Math.PI;
+                    nullSpawner.Offset = double.TryParse(spawnerConfig.InputString, out _) ? double.Parse(spawnerConfig.InputString) * (Math.PI / 180) : 0;
+                    nullSpawner.Frequency = int.TryParse(spawnerConfig.Input3String, out _) ?  int.Parse(spawnerConfig.Input3String) : 200;
+                    nullSpawner.Colour = spawnerConfig.Infectious ? Color.Red : Color.Blue;
+                    spawnerConfig.Dispose();
+                    Spawners.Add(nullSpawner);
+                    spawnersIndex++;
+                    nullSpawner = null;
+                    isDrawing = false;
+                    DrawBox.Refresh();
+                    break;
             }
         }
 
@@ -475,9 +537,10 @@ namespace Particle_Collision
                     nullBorder = null;
                     break;
                 case "WindowRadio":
-                    InputBox strength = new InputBox("Strength:");
+                    InputBox strength = new InputBox("Strength:", "Range:");
                     strength.ShowDialog();
                     Windows[windowsIndex].PullMultiple = double.TryParse(strength.InputString, out _) ? double.Parse(strength.InputString) : 1;
+                    Windows[windowsIndex].Range = double.TryParse(strength.Input2String, out _) && double.Parse(strength.Input2String) > Windows[windowsIndex].LargestDimention ? double.Parse(strength.Input2String) : Windows[windowsIndex].LargestDimention + 13.5;
                     strength.Dispose();
                     windowsIndex++;
                     nullWindow = null;
@@ -548,8 +611,23 @@ namespace Particle_Collision
 
                     if (minX <= e.X && maxX >= e.X && minY <= e.Y && maxY >= e.Y)
                     {
-                        Borders.Remove(Windows[i]);
+                        Windows.Remove(Windows[i]);
                         windowsIndex--;
+                    }
+                }
+
+                for (int i = 0; i < Spawners.Count; i++)
+                {
+                    int minX = (int)Spawners[i].Location.X - 5;
+                    int maxX = (int)Spawners[i].Location.X + 5;
+
+                    int minY = (int)Spawners[i].Location.Y - 5;
+                    int maxY = (int)Spawners[i].Location.Y + 5;
+
+                    if (minX <= e.X && maxX >= e.X && minY <= e.Y && maxY >= e.Y)
+                    {
+                        Spawners.Remove(Spawners[i]);
+                        spawnersIndex--;
                     }
                 }
 

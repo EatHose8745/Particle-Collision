@@ -15,12 +15,12 @@ namespace Particle_Collision
         public double Radius { get; set; }
         public double Mass { get; set; }
         public double Hardness { get; set; }
-        public Color Colour { get; set; }
+        public Color Colour { get { return Infected ? Color.Red : Color.Blue; } }
         public bool IsStationary { get; set; }
         public bool Infected { get; set; }
         public Particle FutureParticle { get { return Update(applyExisting: false); } }
 
-        public Particle(Vector2D location, Vector2D velocity, double gravitationalMultiple, double radius, double mass, double hardness, Color colour, bool infected = false, bool isStationary = false)
+        public Particle(Vector2D location, Vector2D velocity, double gravitationalMultiple, double radius, double mass, double hardness, bool infected = false, bool isStationary = false)
         {
             this.Location = location;
             this.Velocity = velocity;
@@ -28,7 +28,6 @@ namespace Particle_Collision
             this.Radius = radius;
             this.Mass = mass;
             this.Hardness = hardness;
-            this.Colour = colour;
             this.Infected = infected;
             this.IsStationary = isStationary;
         }
@@ -41,7 +40,7 @@ namespace Particle_Collision
                 this.Velocity.Y += gravity;
                 return null;
             }
-            return new Particle(this.Location + this.Velocity, new Vector2D(this.Velocity.X, this.Velocity.Y + gravity), this.GravitationalMultiple, this.Radius, this.Mass, this.Hardness, this.Colour, this.IsStationary);
+            return new Particle(this.Location + this.Velocity, new Vector2D(this.Velocity.X, this.Velocity.Y + gravity), this.GravitationalMultiple, this.Radius, this.Mass, this.Hardness, this.IsStationary);
         }
     }
 }

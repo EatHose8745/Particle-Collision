@@ -10,11 +10,11 @@ namespace Particle_Collision
     {
         public double X { get; set; }
         public double Y { get; set; }
-        public double Absolute 
-        { 
-            get 
-            { 
-                return Abs(this); 
+        public double Absolute
+        {
+            get
+            {
+                return Abs(this);
             }
             set
             {
@@ -23,19 +23,21 @@ namespace Particle_Collision
                 this.Y = value * Math.Sin(angle);
             }
         }
-        public double Angle 
-        { 
-            get 
-            { 
-                return Arg(this); 
-            } 
-            set 
-            { 
+        public double Angle
+        {
+            get
+            {
+                return Arg(this);
+            }
+            set
+            {
                 double abs = this.Absolute;
                 this.X = abs * Math.Cos(value);
                 this.Y = abs * Math.Sin(value);
-            } 
+            }
         }
+
+        public static int Dimensions { get { return 2; } }
 
         public Vector2D(double x = 0, double y = 0)
         {
@@ -66,6 +68,11 @@ namespace Particle_Collision
         public static double AbsoluteDifference(Vector2D a, Vector2D b)
         {
             return Abs(a - b);
+        }
+
+        public static double AbsoluteSquareDifference(Vector2D a, Vector2D b)
+        {
+            return AbsSquared(a - b);
         }
 
         public static Vector2D Normalise(Vector2D vector)

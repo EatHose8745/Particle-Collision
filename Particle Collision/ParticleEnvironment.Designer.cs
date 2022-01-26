@@ -40,6 +40,7 @@ namespace Particle_Collision
             this.BorderRadio = new System.Windows.Forms.RadioButton();
             this.RandomButton = new System.Windows.Forms.Button();
             this.TimerTicksDisplay = new System.Windows.Forms.Label();
+            this.SpawnerRadio = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
             this.ButtonPanel.SuspendLayout();
             this.SuspendLayout();
@@ -89,6 +90,7 @@ namespace Particle_Collision
             // 
             // ButtonPanel
             // 
+            this.ButtonPanel.Controls.Add(this.SpawnerRadio);
             this.ButtonPanel.Controls.Add(this.WindowRadio);
             this.ButtonPanel.Controls.Add(this.NoneRadio);
             this.ButtonPanel.Controls.Add(this.BorderRadio);
@@ -164,6 +166,19 @@ namespace Particle_Collision
             this.TimerTicksDisplay.TabIndex = 3;
             this.TimerTicksDisplay.Text = "Ticks";
             // 
+            // SpawnerRadio
+            // 
+            this.SpawnerRadio.AutoSize = true;
+            this.SpawnerRadio.ForeColor = System.Drawing.Color.White;
+            this.SpawnerRadio.Location = new System.Drawing.Point(3, 358);
+            this.SpawnerRadio.Name = "SpawnerRadio";
+            this.SpawnerRadio.Size = new System.Drawing.Size(67, 17);
+            this.SpawnerRadio.TabIndex = 8;
+            this.SpawnerRadio.Tag = "Radio";
+            this.SpawnerRadio.Text = "Spawner";
+            this.SpawnerRadio.UseVisualStyleBackColor = true;
+            this.SpawnerRadio.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
+            // 
             // ParticleEnvironment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -197,6 +212,7 @@ namespace Particle_Collision
         private System.Windows.Forms.RadioButton BorderRadio;
         private System.Windows.Forms.RadioButton NoneRadio;
         private System.Windows.Forms.RadioButton WindowRadio;
+        private System.Windows.Forms.RadioButton SpawnerRadio;
     }
 }
 
