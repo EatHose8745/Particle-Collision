@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Text.Json;
+using System.IO;
 
 namespace Particle_Collision
 {
     public partial class ParticleEnvironment : Form
     {
-        KD_Node KDTree = new KD_Node();
+        //KD_Node KDTree = new KD_Node();
 
         private List<Particle> particlesReturn = new List<Particle>();
         public List<Particle> Particles = new List<Particle>();
         
         private List<Particle> particlesWithGravity = new List<Particle>();
+
+        string mainDirectory = Directory.GetCurrentDirectory();
 
         public List<Border> Borders = new List<Border>();
         public List<Window> Windows = new List<Window>();
@@ -70,12 +74,12 @@ namespace Particle_Collision
         void AddParticles()
         {
             //particles.Add(new Particle(new Vector2(800, 500), new Vector2(0, 0), 0, 20, 1000000, 1, Color.Green, false));
-            AppendParticle(new Particle(new Vector2D(7, 2), new Vector2D(10, 0), 0, 20, 10, 1));
-            AppendParticle(new Particle(new Vector2D(5, 4), new Vector2D(10, 0), 0, 20, 10, 1));
-            AppendParticle(new Particle(new Vector2D(9, 6), new Vector2D(10, 0), 0, 20, 10, 1));
-            AppendParticle(new Particle(new Vector2D(4, 7), new Vector2D(10, 0), 0, 20, 10, 1));
-            AppendParticle(new Particle(new Vector2D(8, 1), new Vector2D(10, 0), 0, 20, 10, 1));
-            AppendParticle(new Particle(new Vector2D(2, 3), new Vector2D(10, 0), 0, 20, 10, 1));
+            //AppendParticle(new Particle(new Vector2D(70, 20), new Vector2D(10, 0), 0, 20, 10, 1));
+            //AppendParticle(new Particle(new Vector2D(50, 40), new Vector2D(10, 0), 0, 20, 10, 1));
+            //AppendParticle(new Particle(new Vector2D(90, 60), new Vector2D(10, 0), 0, 20, 10, 1));
+            //AppendParticle(new Particle(new Vector2D(40, 70), new Vector2D(10, 0), 0, 20, 10, 1));
+            //AppendParticle(new Particle(new Vector2D(80, 10), new Vector2D(10, 0), 0, 20, 10, 1));
+            //AppendParticle(new Particle(new Vector2D(20, 30), new Vector2D(10, 0), 0, 20, 10, 1));
             //particles.Add(new Particle(new Vector2D(200, 200), new Vector2D(0, 0), 0, 20, 10, 1, Color.Blue, false, true));
             //particles.Add(new Particle(new Vector2(600, 300), new Vector2(-5, 0), 0, 20, 1, 1, Color.Red));
             //particles.Add(new Particle(new Vector2(400, 300), new Vector2(5, 0), 0, 20, 1, 1, Color.Red));
@@ -203,7 +207,7 @@ namespace Particle_Collision
 
             CheckForTerminalVelocity(ref particle);
 
-            Console.WriteLine($"{Vector2D.Abs(particle.Velocity)}, x: {particle.Velocity.X}, y:{particle.Velocity.Y}");
+            //Console.WriteLine($"{Vector2D.Abs(particle.Velocity)}, x: {particle.Velocity.X}, y:{particle.Velocity.Y}");
         }
 
         bool CircleIntersect(Particle p1, Particle p2, bool includeEqual = true)
@@ -323,6 +327,7 @@ namespace Particle_Collision
 
         private void TickTimer_Tick(object sender, EventArgs e)
         {
+            Console.WriteLine(isDrawing);
             for (int i = 0; i < Spawners.Count; i++)
             {
                 if (timerTicks % Spawners[i].Frequency == 0)
@@ -405,8 +410,9 @@ namespace Particle_Collision
         private void ParticleEnvironment_SizeChanged(object sender, EventArgs e)
         {
             DrawBox.Size = new Size(this.Width - 107, this.Height - 39);
-            ButtonPanel.Location = new Point(DrawBox.Width + 6, ButtonPanel.Location.Y);
-            DrawBox.Image = new Bitmap(DrawBox.Width, DrawBox.Height);
+            ButtonPanel.Location = new Point(this.Width - 107 + 6, ButtonPanel.Location.Y);
+            try { DrawBox.Image = new Bitmap(this.Width - 107, this.Height - 39); } catch { }
+            isDrawing = false;
             DrawBox.Refresh();
         }
 
@@ -495,6 +501,9 @@ namespace Particle_Collision
             this.isDrawing = true;
             switch (selectedRadio)
             {
+                case "NoneRadio":
+                    isDrawing = false;
+                    break;
                 case "BorderRadio":
                     nullBorder = new Border(e.Location.X, e.Location.Y, 0, 0, Color.Red, true);
                     nullBorder.Hardness = 1;
@@ -520,6 +529,7 @@ namespace Particle_Collision
                     spawnersIndex++;
                     nullSpawner = null;
                     isDrawing = false;
+                    NoneRadio.Checked = true;
                     DrawBox.Refresh();
                     break;
             }
@@ -631,7 +641,7 @@ namespace Particle_Collision
                     }
                 }
 
-                DrawBox.Refresh();
+                DrawBox.Refresh(); 
             }
         }
 
@@ -653,6 +663,130 @@ namespace Particle_Collision
             }
 
             DrawBox.Refresh();
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            bool timerWasRunning = timerRunning;
+            TickTimer.Stop();
+            timerRunning = false;
+            GenerateSaveFolder();
+            SaveJsons($"save{Directory.GetFiles($@"{mainDirectory}\Saves").Count() + 1}");
+            if (timerWasRunning)
+            {
+                TickTimer.Start();
+                timerRunning = true;
+            }
+        }
+
+        private void GenerateSaveFolder()
+        {
+            if (!Directory.Exists($@"{mainDirectory}\Saves"))
+                Directory.CreateDirectory($@"{mainDirectory}\Saves");
+        }
+
+        private void SaveJsons(string folderName)
+        {
+            //Directory.CreateDirectory($@"{mainDirectory}\Saves\{folderName}");
+
+            if (!File.Exists($@"{mainDirectory}\Saves\{folderName}.json"))
+            {
+                var file = File.Create($@"{mainDirectory}\Saves\{folderName}.json");
+                file.Close();
+            }
+            using (StreamWriter writer = new StreamWriter($@"{mainDirectory}\Saves\{folderName}.json"))
+            {
+                //string poo = JsonSerializer.Serialize(Particles);
+                //Console.WriteLine(poo);
+                writer.WriteLine(JsonSerializer.Serialize(Particles));
+                writer.WriteLine(JsonSerializer.Serialize(Borders));
+                writer.WriteLine(JsonSerializer.Serialize(Windows));
+                writer.WriteLine(JsonSerializer.Serialize(Spawners));
+                /*writer.WriteLine("Particles");
+                string[] particlesToJSON = new string[Particles.Count];
+                for (int i = 0; i < Particles.Count; i++)
+                {
+                    particlesToJSON[i] = JsonSerializer.Serialize(Particles[i]);
+                }
+                writer.WriteLine(String.Join(Environment.NewLine, particlesToJSON));
+                writer.WriteLine("Borders");
+                string[] bordersToJSON = new string[Borders.Count];
+                for (int i = 0; i < Borders.Count; i++)
+                {
+                    bordersToJSON[i] = JsonSerializer.Serialize(Borders[i]);
+                }
+                writer.WriteLine(String.Join(Environment.NewLine, bordersToJSON));
+                writer.WriteLine("Borders");
+                string[] windowsToJSON = new string[Windows.Count];
+                for (int i = 0; i < Windows.Count; i++)
+                {
+                    windowsToJSON[i] = JsonSerializer.Serialize(Windows[i]);
+                }
+                writer.WriteLine(String.Join(Environment.NewLine, windowsToJSON));
+                writer.WriteLine("Spawners");
+                string[] spawnersToJSON = new string[Spawners.Count];
+                for (int i = 0; i < Spawners.Count; i++)
+                {
+                    spawnersToJSON[i] = JsonSerializer.Serialize(Spawners[i]);
+                }
+                writer.WriteLine(String.Join(Environment.NewLine, spawnersToJSON));*/
+                writer.Close();
+            }
+
+            /*for (int i = 0; i < Particles.Count; i++)
+            {
+                File.WriteAllText($@"{mainDirectory}\Saves\{folderName}\Particles\particle{i}.json", JsonSerializer.Serialize(Particles[i]));
+            }
+            for (int i = 0; i < Borders.Count; i++)
+            {
+                File.WriteAllText($@"{mainDirectory}\Saves\{folderName}\Borders\border{i}.json", JsonSerializer.Serialize(Borders[i]));
+            }
+            for (int i = 0; i < Windows.Count; i++)
+            {
+                File.WriteAllText($@"{mainDirectory}\Saves\{folderName}\Windows\window{i}.json", JsonSerializer.Serialize(Windows[i]));
+            }
+            for (int i = 0; i < Spawners.Count; i++)
+            {
+                File.WriteAllText($@"{mainDirectory}\Saves\{folderName}\Spawners\spawner{i}.json", JsonSerializer.Serialize(Spawners[i]));
+            }*/
+        }
+
+        private void LoadButton_Click(object sender, EventArgs e)
+        {
+            //ResetButton.PerformClick();
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = $@"{mainDirectory}\Saves";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try { ResetButton.PerformClick(); LoadSave(openFileDialog.FileName);  } catch { MessageBox.Show("Something went wrong!"); }
+                DrawBox.Refresh();
+            }
+        }
+
+        private void LoadSave(string savePath)
+        {
+            string[] jsonData = File.ReadAllLines(savePath);
+            Particles = JsonSerializer.Deserialize<List<Particle>>(jsonData[0]);
+            Borders = JsonSerializer.Deserialize<List<Border>>(jsonData[1]);
+            Windows = JsonSerializer.Deserialize<List<Window>>(jsonData[2]);
+            Spawners = JsonSerializer.Deserialize<List<Spawner>>(jsonData[3]);
+
+            /*foreach (string file in Directory.GetFiles($@"{savePath}\Particles"))
+            {
+                Particles.Add(JsonSerializer.Deserialize<Particle>(File.ReadAllText(file)));
+            }
+            foreach (string file in Directory.GetFiles($@"{savePath}\Borders"))
+            {
+                Borders.Add(JsonSerializer.Deserialize<Border>(File.ReadAllText(file)));
+            }
+            foreach (string file in Directory.GetFiles($@"{savePath}\Windows"))
+            {
+                Windows.Add(JsonSerializer.Deserialize<Window>(File.ReadAllText(file)));
+            }
+            foreach (string file in Directory.GetFiles($@"{savePath}\Spawners"))
+            {
+                Spawners.Add(JsonSerializer.Deserialize<Spawner>(File.ReadAllText(file)));
+            }*/
         }
     }
 }

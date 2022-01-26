@@ -35,12 +35,14 @@ namespace Particle_Collision
             this.TimerToggleButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.ButtonPanel = new System.Windows.Forms.Panel();
+            this.SpawnerRadio = new System.Windows.Forms.RadioButton();
             this.WindowRadio = new System.Windows.Forms.RadioButton();
             this.NoneRadio = new System.Windows.Forms.RadioButton();
             this.BorderRadio = new System.Windows.Forms.RadioButton();
             this.RandomButton = new System.Windows.Forms.Button();
             this.TimerTicksDisplay = new System.Windows.Forms.Label();
-            this.SpawnerRadio = new System.Windows.Forms.RadioButton();
+            this.SaveButton = new System.Windows.Forms.Button();
+            this.LoadButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
             this.ButtonPanel.SuspendLayout();
             this.SuspendLayout();
@@ -90,6 +92,8 @@ namespace Particle_Collision
             // 
             // ButtonPanel
             // 
+            this.ButtonPanel.Controls.Add(this.LoadButton);
+            this.ButtonPanel.Controls.Add(this.SaveButton);
             this.ButtonPanel.Controls.Add(this.SpawnerRadio);
             this.ButtonPanel.Controls.Add(this.WindowRadio);
             this.ButtonPanel.Controls.Add(this.NoneRadio);
@@ -103,6 +107,19 @@ namespace Particle_Collision
             this.ButtonPanel.Name = "ButtonPanel";
             this.ButtonPanel.Size = new System.Drawing.Size(81, 450);
             this.ButtonPanel.TabIndex = 3;
+            // 
+            // SpawnerRadio
+            // 
+            this.SpawnerRadio.AutoSize = true;
+            this.SpawnerRadio.ForeColor = System.Drawing.Color.White;
+            this.SpawnerRadio.Location = new System.Drawing.Point(3, 358);
+            this.SpawnerRadio.Name = "SpawnerRadio";
+            this.SpawnerRadio.Size = new System.Drawing.Size(67, 17);
+            this.SpawnerRadio.TabIndex = 8;
+            this.SpawnerRadio.Tag = "Radio";
+            this.SpawnerRadio.Text = "Spawner";
+            this.SpawnerRadio.UseVisualStyleBackColor = true;
+            this.SpawnerRadio.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // WindowRadio
             // 
@@ -166,18 +183,27 @@ namespace Particle_Collision
             this.TimerTicksDisplay.TabIndex = 3;
             this.TimerTicksDisplay.Text = "Ticks";
             // 
-            // SpawnerRadio
+            // SaveButton
             // 
-            this.SpawnerRadio.AutoSize = true;
-            this.SpawnerRadio.ForeColor = System.Drawing.Color.White;
-            this.SpawnerRadio.Location = new System.Drawing.Point(3, 358);
-            this.SpawnerRadio.Name = "SpawnerRadio";
-            this.SpawnerRadio.Size = new System.Drawing.Size(67, 17);
-            this.SpawnerRadio.TabIndex = 8;
-            this.SpawnerRadio.Tag = "Radio";
-            this.SpawnerRadio.Text = "Spawner";
-            this.SpawnerRadio.UseVisualStyleBackColor = true;
-            this.SpawnerRadio.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
+            this.SaveButton.ForeColor = System.Drawing.Color.Black;
+            this.SaveButton.Location = new System.Drawing.Point(3, 143);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(75, 35);
+            this.SaveButton.TabIndex = 9;
+            this.SaveButton.Text = "Save";
+            this.SaveButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            // 
+            // LoadButton
+            // 
+            this.LoadButton.ForeColor = System.Drawing.Color.Black;
+            this.LoadButton.Location = new System.Drawing.Point(3, 184);
+            this.LoadButton.Name = "LoadButton";
+            this.LoadButton.Size = new System.Drawing.Size(75, 35);
+            this.LoadButton.TabIndex = 10;
+            this.LoadButton.Text = "Load";
+            this.LoadButton.UseVisualStyleBackColor = true;
+            this.LoadButton.Click += new System.EventHandler(this.LoadButton_Click);
             // 
             // ParticleEnvironment
             // 
@@ -213,6 +239,8 @@ namespace Particle_Collision
         private System.Windows.Forms.RadioButton NoneRadio;
         private System.Windows.Forms.RadioButton WindowRadio;
         private System.Windows.Forms.RadioButton SpawnerRadio;
+        private System.Windows.Forms.Button SaveButton;
+        private System.Windows.Forms.Button LoadButton;
     }
 }
 
