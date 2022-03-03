@@ -35,16 +35,21 @@ namespace Particle_Collision
             this.TimerToggleButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.ButtonPanel = new System.Windows.Forms.Panel();
+            this.LoadButton = new System.Windows.Forms.Button();
+            this.SaveButton = new System.Windows.Forms.Button();
             this.SpawnerRadio = new System.Windows.Forms.RadioButton();
             this.WindowRadio = new System.Windows.Forms.RadioButton();
             this.NoneRadio = new System.Windows.Forms.RadioButton();
             this.BorderRadio = new System.Windows.Forms.RadioButton();
             this.RandomButton = new System.Windows.Forms.Button();
             this.TimerTicksDisplay = new System.Windows.Forms.Label();
-            this.SaveButton = new System.Windows.Forms.Button();
-            this.LoadButton = new System.Windows.Forms.Button();
+            this.DescPanel = new System.Windows.Forms.Panel();
+            this.ItemDesc = new System.Windows.Forms.Label();
+            this.HoverDescription = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
             this.ButtonPanel.SuspendLayout();
+            this.DescPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // DrawBox
@@ -52,7 +57,7 @@ namespace Particle_Collision
             this.DrawBox.BackColor = System.Drawing.Color.White;
             this.DrawBox.Location = new System.Drawing.Point(0, 0);
             this.DrawBox.Name = "DrawBox";
-            this.DrawBox.Size = new System.Drawing.Size(800, 450);
+            this.DrawBox.Size = new System.Drawing.Size(800, 417);
             this.DrawBox.TabIndex = 0;
             this.DrawBox.TabStop = false;
             this.DrawBox.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawBox_Paint);
@@ -78,6 +83,8 @@ namespace Particle_Collision
             this.TimerToggleButton.Text = "Toggle Timer\r\n";
             this.TimerToggleButton.UseVisualStyleBackColor = true;
             this.TimerToggleButton.Click += new System.EventHandler(this.TimerToggleButton_Click);
+            this.TimerToggleButton.MouseEnter += new System.EventHandler(this.TimerToggleButton_MouseEnter);
+            this.TimerToggleButton.MouseLeave += new System.EventHandler(this.TimerToggleButton_MouseLeave);
             // 
             // ResetButton
             // 
@@ -89,6 +96,8 @@ namespace Particle_Collision
             this.ResetButton.Text = "Reset";
             this.ResetButton.UseVisualStyleBackColor = true;
             this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+            this.ResetButton.MouseEnter += new System.EventHandler(this.ResetButton_MouseEnter);
+            this.ResetButton.MouseLeave += new System.EventHandler(this.ResetButton_MouseLeave);
             // 
             // ButtonPanel
             // 
@@ -103,16 +112,42 @@ namespace Particle_Collision
             this.ButtonPanel.Controls.Add(this.TimerToggleButton);
             this.ButtonPanel.Controls.Add(this.ResetButton);
             this.ButtonPanel.ForeColor = System.Drawing.Color.Black;
-            this.ButtonPanel.Location = new System.Drawing.Point(806, 0);
+            this.ButtonPanel.Location = new System.Drawing.Point(804, 0);
             this.ButtonPanel.Name = "ButtonPanel";
             this.ButtonPanel.Size = new System.Drawing.Size(81, 450);
             this.ButtonPanel.TabIndex = 3;
+            // 
+            // LoadButton
+            // 
+            this.LoadButton.ForeColor = System.Drawing.Color.Black;
+            this.LoadButton.Location = new System.Drawing.Point(3, 184);
+            this.LoadButton.Name = "LoadButton";
+            this.LoadButton.Size = new System.Drawing.Size(75, 35);
+            this.LoadButton.TabIndex = 10;
+            this.LoadButton.Text = "Load";
+            this.LoadButton.UseVisualStyleBackColor = true;
+            this.LoadButton.Click += new System.EventHandler(this.LoadButton_Click);
+            this.LoadButton.MouseEnter += new System.EventHandler(this.LoadButton_MouseEnter);
+            this.LoadButton.MouseLeave += new System.EventHandler(this.LoadButton_MouseLeave);
+            // 
+            // SaveButton
+            // 
+            this.SaveButton.ForeColor = System.Drawing.Color.Black;
+            this.SaveButton.Location = new System.Drawing.Point(3, 142);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(75, 35);
+            this.SaveButton.TabIndex = 9;
+            this.SaveButton.Text = "Save";
+            this.SaveButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            this.SaveButton.MouseEnter += new System.EventHandler(this.SaveButton_MouseEnter);
+            this.SaveButton.MouseLeave += new System.EventHandler(this.SaveButton_MouseLeave);
             // 
             // SpawnerRadio
             // 
             this.SpawnerRadio.AutoSize = true;
             this.SpawnerRadio.ForeColor = System.Drawing.Color.White;
-            this.SpawnerRadio.Location = new System.Drawing.Point(3, 358);
+            this.SpawnerRadio.Location = new System.Drawing.Point(3, 331);
             this.SpawnerRadio.Name = "SpawnerRadio";
             this.SpawnerRadio.Size = new System.Drawing.Size(67, 17);
             this.SpawnerRadio.TabIndex = 8;
@@ -125,7 +160,7 @@ namespace Particle_Collision
             // 
             this.WindowRadio.AutoSize = true;
             this.WindowRadio.ForeColor = System.Drawing.Color.White;
-            this.WindowRadio.Location = new System.Drawing.Point(3, 335);
+            this.WindowRadio.Location = new System.Drawing.Point(3, 308);
             this.WindowRadio.Name = "WindowRadio";
             this.WindowRadio.Size = new System.Drawing.Size(64, 17);
             this.WindowRadio.TabIndex = 7;
@@ -139,7 +174,7 @@ namespace Particle_Collision
             this.NoneRadio.AutoSize = true;
             this.NoneRadio.Checked = true;
             this.NoneRadio.ForeColor = System.Drawing.Color.White;
-            this.NoneRadio.Location = new System.Drawing.Point(3, 289);
+            this.NoneRadio.Location = new System.Drawing.Point(3, 262);
             this.NoneRadio.Name = "NoneRadio";
             this.NoneRadio.Size = new System.Drawing.Size(51, 17);
             this.NoneRadio.TabIndex = 6;
@@ -153,7 +188,7 @@ namespace Particle_Collision
             // 
             this.BorderRadio.AutoSize = true;
             this.BorderRadio.ForeColor = System.Drawing.Color.White;
-            this.BorderRadio.Location = new System.Drawing.Point(3, 312);
+            this.BorderRadio.Location = new System.Drawing.Point(3, 285);
             this.BorderRadio.Name = "BorderRadio";
             this.BorderRadio.Size = new System.Drawing.Size(56, 17);
             this.BorderRadio.TabIndex = 5;
@@ -172,38 +207,55 @@ namespace Particle_Collision
             this.RandomButton.Text = "Random";
             this.RandomButton.UseVisualStyleBackColor = true;
             this.RandomButton.Click += new System.EventHandler(this.RandomButton_Click);
+            this.RandomButton.MouseEnter += new System.EventHandler(this.RandomButton_MouseEnter);
+            this.RandomButton.MouseLeave += new System.EventHandler(this.RandomButton_MouseLeave);
             // 
             // TimerTicksDisplay
             // 
             this.TimerTicksDisplay.AutoSize = true;
             this.TimerTicksDisplay.ForeColor = System.Drawing.Color.White;
-            this.TimerTicksDisplay.Location = new System.Drawing.Point(3, 252);
+            this.TimerTicksDisplay.Location = new System.Drawing.Point(3, 237);
             this.TimerTicksDisplay.Name = "TimerTicksDisplay";
             this.TimerTicksDisplay.Size = new System.Drawing.Size(33, 13);
             this.TimerTicksDisplay.TabIndex = 3;
             this.TimerTicksDisplay.Text = "Ticks";
             // 
-            // SaveButton
+            // DescPanel
             // 
-            this.SaveButton.ForeColor = System.Drawing.Color.Black;
-            this.SaveButton.Location = new System.Drawing.Point(3, 143);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 35);
-            this.SaveButton.TabIndex = 9;
-            this.SaveButton.Text = "Save";
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            this.DescPanel.Controls.Add(this.ItemDesc);
+            this.DescPanel.Controls.Add(this.HoverDescription);
+            this.DescPanel.Controls.Add(this.label1);
+            this.DescPanel.Location = new System.Drawing.Point(0, 420);
+            this.DescPanel.Name = "DescPanel";
+            this.DescPanel.Size = new System.Drawing.Size(800, 27);
+            this.DescPanel.TabIndex = 4;
             // 
-            // LoadButton
+            // ItemDesc
             // 
-            this.LoadButton.ForeColor = System.Drawing.Color.Black;
-            this.LoadButton.Location = new System.Drawing.Point(3, 184);
-            this.LoadButton.Name = "LoadButton";
-            this.LoadButton.Size = new System.Drawing.Size(75, 35);
-            this.LoadButton.TabIndex = 10;
-            this.LoadButton.Text = "Load";
-            this.LoadButton.UseVisualStyleBackColor = true;
-            this.LoadButton.Click += new System.EventHandler(this.LoadButton_Click);
+            this.ItemDesc.AutoSize = true;
+            this.ItemDesc.ForeColor = System.Drawing.SystemColors.Control;
+            this.ItemDesc.Location = new System.Drawing.Point(8, 7);
+            this.ItemDesc.Name = "ItemDesc";
+            this.ItemDesc.Size = new System.Drawing.Size(0, 13);
+            this.ItemDesc.TabIndex = 2;
+            // 
+            // HoverDescription
+            // 
+            this.HoverDescription.AutoSize = true;
+            this.HoverDescription.ForeColor = System.Drawing.SystemColors.Control;
+            this.HoverDescription.Location = new System.Drawing.Point(8, 7);
+            this.HoverDescription.Name = "HoverDescription";
+            this.HoverDescription.Size = new System.Drawing.Size(0, 13);
+            this.HoverDescription.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "label1";
             // 
             // ParticleEnvironment
             // 
@@ -211,17 +263,20 @@ namespace Particle_Collision
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(887, 450);
+            this.Controls.Add(this.DescPanel);
             this.Controls.Add(this.ButtonPanel);
             this.Controls.Add(this.DrawBox);
             this.Name = "ParticleEnvironment";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Environment";
+            this.Text = "Particle Simulation Interface";
             this.Load += new System.EventHandler(this.ParticleEnvironment_Load);
             this.SizeChanged += new System.EventHandler(this.ParticleEnvironment_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).EndInit();
             this.ButtonPanel.ResumeLayout(false);
             this.ButtonPanel.PerformLayout();
+            this.DescPanel.ResumeLayout(false);
+            this.DescPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -241,6 +296,10 @@ namespace Particle_Collision
         private System.Windows.Forms.RadioButton SpawnerRadio;
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.Button LoadButton;
+        private System.Windows.Forms.Panel DescPanel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label HoverDescription;
+        private System.Windows.Forms.Label ItemDesc;
     }
 }
 

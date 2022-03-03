@@ -5,13 +5,15 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
+using Newtonsoft.Json;
+
 
 namespace Particle_Collision
 {
     public partial class ParticleEnvironment : Form
     {
         //KD_Node KDTree = new KD_Node();
-
+        
         private List<Particle> particlesReturn = new List<Particle>();
         public List<Particle> Particles = new List<Particle>();
         
@@ -22,6 +24,8 @@ namespace Particle_Collision
         public List<Border> Borders = new List<Border>();
         public List<Window> Windows = new List<Window>();
         public List<Spawner> Spawners = new List<Spawner>();
+
+        public List<object> selectedObjects = new List<object>();
 
         private int bordersIndex = 0;
         private Border nullBorder = null;
@@ -48,6 +52,9 @@ namespace Particle_Collision
         private string randomSeed = "TestSeed";
         private Random random;
 
+        private Point startSelectMouseLocation;
+        private Point endSelectMouseLocation;
+
         public ParticleEnvironment()
         {
             InitializeComponent();
@@ -61,6 +68,7 @@ namespace Particle_Collision
             SetTerminalVelocity();
             TimerToggleButton.PerformClick();
             DrawBox.Refresh();
+            refreshItemDesc();
         }
 
         void InitiliseRandom(ref Random random, string seed)
@@ -333,7 +341,7 @@ namespace Particle_Collision
                 if (timerTicks % Spawners[i].Frequency == 0)
                 {
                     bool infectious = Spawners[i].Colour == Color.Red ? true : false;
-                    AppendParticle(new Particle(Spawners[i].Location, Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(100), random.NextDouble() * Spawners[i].Angle + Spawners[i].Offset), 0, 10, 1, 1, infectious));
+                    AppendParticle(new Particle(new Vector2D(Spawners[i].Location.X, Spawners[i].Location.Y), Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(100), random.NextDouble() * Spawners[i].Angle + Spawners[i].Offset), 0, 10, 1, 1, infectious));
                 }
             }
             for (int i = 0; i < Particles.Count; i++)
@@ -409,8 +417,9 @@ namespace Particle_Collision
 
         private void ParticleEnvironment_SizeChanged(object sender, EventArgs e)
         {
-            DrawBox.Size = new Size(this.Width - 107, this.Height - 39);
+            DrawBox.Size = new Size(this.Width - 107, this.Height - 71);
             ButtonPanel.Location = new Point(this.Width - 107 + 6, ButtonPanel.Location.Y);
+            DescPanel.Location = new Point(DescPanel.Location.X, this.Height - 69);
             try { DrawBox.Image = new Bitmap(this.Width - 107, this.Height - 39); } catch { }
             isDrawing = false;
             DrawBox.Refresh();
@@ -496,8 +505,10 @@ namespace Particle_Collision
 
         private void DrawBox_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-                return;
+            if (e.Button == MouseButtons.Right && selectedRadio == "NoneRadio")
+            {
+                startSelectMouseLocation = e.Location;
+            }
             this.isDrawing = true;
             switch (selectedRadio)
             {
@@ -537,8 +548,12 @@ namespace Particle_Collision
 
         private void DrawBox_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-                return;
+            if (e.Button == MouseButtons.Right && selectedRadio == "NoneRadio")
+            {
+                endSelectMouseLocation = e.Location;
+                if (startSelectMouseLocation != null && endSelectMouseLocation != null)
+                    SelectAllObjectsInSelectRadius(startSelectMouseLocation, endSelectMouseLocation);
+            }
             this.isDrawing = false;
             switch (selectedRadio)
             {
@@ -560,6 +575,24 @@ namespace Particle_Collision
             DrawBox.Refresh();
         }
 
+        private void SelectAllObjectsInSelectRadius(Point start, Point end)
+        {
+            for (int i = 0; i < Borders.Count; i++)
+            {
+                //if (Borders[i].Location)
+            }
+
+            for (int i = 0; i < Windows.Count; i++)
+            {
+                
+            }
+
+            for (int i = 0; i < Spawners.Count; i++)
+            {
+                
+            }
+        }
+
         private void DrawBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDrawing)
@@ -567,12 +600,10 @@ namespace Particle_Collision
                 switch (selectedRadio)
                 {
                     case "BorderRadio":
-                        Borders[bordersIndex].End.X = e.Location.X;
-                        Borders[bordersIndex].End.Y = e.Location.Y;
+                        Borders[bordersIndex].End = new Point(e.Location.X, e.Location.Y);
                         break;
                     case "WindowRadio":
-                        Windows[windowsIndex].End.X = e.Location.X;
-                        Windows[windowsIndex].End.Y = e.Location.Y;
+                        Windows[windowsIndex].End = new Point(e.Location.X, e.Location.Y);
                         break;
                 }
                 DrawBox.Refresh();
@@ -588,6 +619,7 @@ namespace Particle_Collision
                 if (radio != null && radio.Checked)
                 {
                     this.selectedRadio = radio.Name;
+                    refreshItemDesc();
                 }
             }
         }
@@ -667,18 +699,85 @@ namespace Particle_Collision
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            bool timerWasRunning = timerRunning;
-            TickTimer.Stop();
-            timerRunning = false;
-            GenerateSaveFolder();
-            SaveJsons($"save{Directory.GetFiles($@"{mainDirectory}\Saves").Count() + 1}");
-            if (timerWasRunning)
+            /* bool timerWasRunning = timerRunning;
+             TickTimer.Stop();
+             timerRunning = false;
+             GenerateSaveFolder();
+             SaveJsons($"save{Directory.GetFiles($@"{mainDirectory}\Saves").Length + 1}");
+             if (timerWasRunning)
+             {
+                 TickTimer.Start();
+                 timerRunning = true;
+             }
+             */
+            string fileName = $@"{mainDirectory}\saves\save1.txt";
+            using (StreamWriter writer = new StreamWriter(fileName))
             {
-                TickTimer.Start();
-                timerRunning = true;
+                writer.WriteLine("BORDERS");
+                writer.WriteLine(Convert.ToString(Borders.Count));
+                foreach (Border b in Borders)
+                {
+                    writer.WriteLine(b.GetBorderInfoForSaving());
+                }
+                writer.WriteLine("WINDOWS");
+                writer.WriteLine(Convert.ToString(Windows.Count));
+                foreach (Window w in Windows)
+                {
+                    writer.WriteLine(w.getWindowInfoForSaving());
+                }
+                writer.WriteLine("SPAWNERS");
+                writer.WriteLine(Convert.ToString(Spawners.Count));
+                foreach (Spawner s in Spawners)
+                {
+                    writer.WriteLine(s.getSpawnerInfoForSaving());
+                }
             }
         }
 
+        private void LoadButton_Click(object sender, EventArgs e)
+        {
+            /*//ResetButton.PerformClick();
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = $@"{mainDirectory}\Saves";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try { ResetButton.PerformClick(); LoadSave(openFileDialog.FileName); } catch { MessageBox.Show("Something went wrong!"); }
+                DrawBox.Refresh();
+            } */
+
+
+            // Delete all current items
+            ResetButton_Click(sender, e);
+
+            string fileName = $@"{mainDirectory}\saves\save1.txt";
+            using (StreamReader reader = new StreamReader(fileName))
+            {
+                reader.ReadLine(); //BORDERS 
+                int numBorders = Convert.ToInt32(reader.ReadLine());
+                for (int i = 0; i < numBorders; i++)
+                { 
+                    Border b = new Border(reader.ReadLine());
+                    Borders.Add(b);
+                }
+                reader.ReadLine(); //WINDOWS
+                int numWindows = Convert.ToInt32(reader.ReadLine());
+                for (int i = 0; i < numWindows; i++)
+                {
+                    Window w = new Window(reader.ReadLine());
+                    Windows.Add(w);
+                }
+                reader.ReadLine(); //SPAWNERS
+                int numSpawners = Convert.ToInt32(reader.ReadLine());
+                for (int i = 0; i < numSpawners; i++)
+                {
+                    Spawner s = new Spawner(reader.ReadLine());
+                    Spawners.Add(s);
+                }
+            }
+            TickTimer_Tick(sender, new EventArgs());
+            Particles.Clear();
+            TickTimer_Tick(sender, new EventArgs());
+        }
         private void GenerateSaveFolder()
         {
             if (!Directory.Exists($@"{mainDirectory}\Saves"))
@@ -698,10 +797,11 @@ namespace Particle_Collision
             {
                 //string poo = JsonSerializer.Serialize(Particles);
                 //Console.WriteLine(poo);
-                writer.WriteLine(JsonSerializer.Serialize(Particles));
-                writer.WriteLine(JsonSerializer.Serialize(Borders));
-                writer.WriteLine(JsonSerializer.Serialize(Windows));
-                writer.WriteLine(JsonSerializer.Serialize(Spawners));
+
+                //writer.WriteLine(JsonSerializer.Serialize(Particles));
+                writer.WriteLine(JsonConvert.SerializeObject(Borders));
+                writer.WriteLine(JsonConvert.SerializeObject(Windows));
+                writer.WriteLine(JsonConvert.SerializeObject(Spawners));
                 /*writer.WriteLine("Particles");
                 string[] particlesToJSON = new string[Particles.Count];
                 for (int i = 0; i < Particles.Count; i++)
@@ -751,25 +851,14 @@ namespace Particle_Collision
             }*/
         }
 
-        private void LoadButton_Click(object sender, EventArgs e)
-        {
-            //ResetButton.PerformClick();
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = $@"{mainDirectory}\Saves";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try { ResetButton.PerformClick(); LoadSave(openFileDialog.FileName);  } catch { MessageBox.Show("Something went wrong!"); }
-                DrawBox.Refresh();
-            }
-        }
-
+   
         private void LoadSave(string savePath)
         {
             string[] jsonData = File.ReadAllLines(savePath);
-            Particles = JsonSerializer.Deserialize<List<Particle>>(jsonData[0]);
-            Borders = JsonSerializer.Deserialize<List<Border>>(jsonData[1]);
-            Windows = JsonSerializer.Deserialize<List<Window>>(jsonData[2]);
-            Spawners = JsonSerializer.Deserialize<List<Spawner>>(jsonData[3]);
+            //Particles = JsonSerializer.Deserialize<List<Particle>>(jsonData[0]);
+            Borders = JsonConvert.DeserializeObject<BorderData>(jsonData[0]).Data;
+            Windows = JsonConvert.DeserializeObject<WindowData>(jsonData[1]).Data;
+            Spawners = JsonConvert.DeserializeObject<SpawnerData>(jsonData[2]).Data;
 
             /*foreach (string file in Directory.GetFiles($@"{savePath}\Particles"))
             {
@@ -788,5 +877,65 @@ namespace Particle_Collision
                 Spawners.Add(JsonSerializer.Deserialize<Spawner>(File.ReadAllText(file)));
             }*/
         }
+
+        public void refreshItemDesc() 
+        {
+            if (this.selectedRadio == "NoneRadio")
+            {
+                ItemDesc.Text = "Click a button or select a tool to create or adjust the environment.";
+            }
+            else if (this.selectedRadio == "BorderRadio")
+            {
+                ItemDesc.Text = "BORDER: Click and drag in the environment to create a border, right click a border to remove it.";
+            }
+            else if (this.selectedRadio == "WindowRadio")
+            {
+                ItemDesc.Text = "WINDOW: Click and drag in the environment to create a window, right click a window to remove it, double click a window open and close it";
+            }
+            else if (this.selectedRadio == "SpawnerRadio")
+            {
+                ItemDesc.Text = "SPAWNER: Tap anywhere on the environment to create a spawner.";
+            }
+        }
+        private void TimerToggleButton_MouseEnter(object sender, EventArgs e)
+        {
+            ItemDesc.Text = "TOGGLE TIMER: This tool allows you to pause and play the simulation.";
+        }
+        private void TimerToggleButton_MouseLeave(object sender, EventArgs e){refreshItemDesc();}
+        private void ResetButton_MouseEnter(object sender, EventArgs e)
+        {
+            ItemDesc.Text = "RESET: This tool is used to clear the screen from all objects.";
+        }
+        private void ResetButton_MouseLeave(object sender, EventArgs e){refreshItemDesc();}
+        private void RandomButton_MouseEnter(object sender, EventArgs e)
+        {
+            ItemDesc.Text = "RANDOM: This button generates a random particles on the screen.";
+        }
+        private void RandomButton_MouseLeave(object sender, EventArgs e){refreshItemDesc();}
+        private void SaveButton_MouseEnter(object sender, EventArgs e)
+        {
+            ItemDesc.Text = "SAVE: This button saves your current envitronment, but not particles.";
+        }
+        private void SaveButton_MouseLeave(object sender, EventArgs e){refreshItemDesc();}
+        private void LoadButton_MouseEnter(object sender, EventArgs e)
+        {
+            ItemDesc.Text = "LOAD: This button loads back your saved environments.";
+        }
+        private void LoadButton_MouseLeave(object sender, EventArgs e){refreshItemDesc();}
+    }
+
+    public class BorderData
+    {
+        public List<Border> Data { get; set; }
+    }
+
+    public class WindowData
+    {
+        public List<Window> Data { get; set; }
+    }
+
+    public class SpawnerData
+    {
+        public List<Spawner> Data { get; set; }
     }
 }

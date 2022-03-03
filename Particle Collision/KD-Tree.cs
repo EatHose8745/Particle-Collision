@@ -8,28 +8,30 @@ namespace Particle_Collision
 {
     public static class KD_Tree
     {
-        public static KD_Node GenerateKDTree(List<Particle> points, int depth = 0)
+        public static KD_Node GenerateKDTree(List<Particle> particles, int depth = 0)
         {
-            if (points.Count == 0)
+            if (particles.Count == 0)
                 return null;
 
             KD_Node node = new KD_Node();
 
             int A = depth % Vector2D.Dimensions;
 
-            points = A == 0 ? points.OrderBy(p => p.Location.X).ToList() : points.OrderBy(p => p.Location.Y).ToList();
+            particles = A == 0 ? particles.OrderBy(p => p.Location.X).ToList() : particles.OrderBy(p => p.Location.Y).ToList();
 
-            int medianIndex = points.Count / 2;
-            Particle median = points[medianIndex];
+            int medianIndex = particles.Count / 2;
+            Particle median = particles[medianIndex];
 
             node.Location = median.Location;
-            node.LeftChild = KD_Tree.GenerateKDTree(points.GetRange(0, medianIndex), depth + 1);
-            node.RightChild = KD_Tree.GenerateKDTree(points.GetRange(medianIndex + 1, points.Count - (medianIndex + 1)), depth + 1);
+            node.LeftChild = KD_Tree.GenerateKDTree(particles.GetRange(0, medianIndex), depth + 1);
+            node.RightChild = KD_Tree.GenerateKDTree(particles.GetRange(medianIndex + 1, particles.Count - (medianIndex + 1)), depth + 1);
             return node;
         }
 
         public static KD_Node NearestNeighbour(KD_Node root, Vector2D target, int depth)
         {
+            // Did work but really slow, gonna fix
+
             return null;
         }
     }
