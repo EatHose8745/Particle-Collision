@@ -49,7 +49,6 @@ C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\De
 C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CopyComplete
 C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\bin\Debug\Newtonsoft.Json.xml
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.AssemblyReference.cache
 C:\Users\e15-007\Downloads\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe.config
 C:\Users\e15-007\Downloads\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.exe
 C:\Users\e15-007\Downloads\Particle-Collision\Particle Collision\bin\Debug\Particle Collision.pdb

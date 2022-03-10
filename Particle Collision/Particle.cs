@@ -18,7 +18,7 @@ namespace Particle_Collision
         public Color Colour { get { return Infected ? Color.Red : Color.Blue; } }
         public bool IsStationary { get; set; }
         public bool Infected { get; set; }
-        //public Particle FutureParticle { get { return Update(applyExisting: false); } }
+        public Vector2D FutureLocationVector { get { return Update(applyExisting: false).Location; } }
 
         public Particle(Vector2D location, Vector2D velocity, double gravitationalMultiple, double radius, double mass, double hardness, bool infected = false, bool isStationary = false)
         {

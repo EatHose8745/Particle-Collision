@@ -40,7 +40,7 @@ namespace Particle_Collision
 
         public static int Dimensions { get { return 2; } }
 
-        public Vector2D(double x = 0, double y = 0)
+        public Vector2D(double x = double.PositiveInfinity, double y = double.PositiveInfinity)
         {
             this.X = x;
             this.Y = y;
@@ -71,9 +71,20 @@ namespace Particle_Collision
             return Abs(a - b);
         }
 
+        public static double RelativeDirectionSign(Vector2D a, Vector2D b)
+        {
+            return Math.Sign(a.Absolute - b.Absolute);
+        }
+
         public static double AbsoluteSquareDifference(Vector2D a, Vector2D b)
         {
             return AbsSquared(a - b);
+        }
+
+        public static Vector2D Closest(Vector2D a, Vector2D b, Vector2D target)
+        {
+            Vector2D result = AbsoluteSquareDifference(a, target) > AbsoluteDifference(b, target) ? b : a;
+            return result;
         }
 
         public static Vector2D Normalise(Vector2D vector)

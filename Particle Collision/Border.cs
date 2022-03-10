@@ -35,7 +35,7 @@ namespace Particle_Collision
 
         public int Mass
         {
-            get; set;
+            get { return 1; }
         }
         public int Hardness
         {

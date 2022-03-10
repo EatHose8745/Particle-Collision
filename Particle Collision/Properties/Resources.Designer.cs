@@ -19,7 +19,7 @@ namespace Particle_Collision.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,116 @@ namespace Particle_Collision.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap infectiousSpawner {
+            get {
+                object obj = ResourceManager.GetObject("infectiousSpawner", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap normalSpawner {
+            get {
+                object obj = ResourceManager.GetObject("normalSpawner", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BORDERS
+        ///2
+        ///95*444*385*684*True*Color [Red]
+        ///614*219*711*726*True*Color [Red]
+        ///WINDOWS
+        ///2
+        ///988*434*1258*620*True*Color [Blue]*True*45*283.5
+        ///461*377*537*450*True*Color [Blue]*True*1*89.5
+        ///SPAWNERS
+        ///2
+        ///153*141*True*0.349065850398866*0.785398163397448*10*100
+        ///1121*254*False*0*6.28318530717959*10*100
+        ///FORM SIZE
+        ///1443,796
+        ///.
+        /// </summary>
+        internal static string preset1 {
+            get {
+                return ResourceManager.GetString("preset1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BORDERS
+        ///3
+        ///102*36*227*138*True*Color [Red]
+        ///592*92*719*187*True*Color [Red]
+        ///214*268*340*366*True*Color [Red]
+        ///WINDOWS
+        ///1
+        ///404*368*453*406*True*Color [Blue]*True*1*1000
+        ///SPAWNERS
+        ///2
+        ///519*64*True*0.349065850398866*1.0471975511966*10*100
+        ///706*301*False*0*6.28318530717959*10*100
+        ///FORM SIZE
+        ///903,489
+        ///.
+        /// </summary>
+        internal static string preset2 {
+            get {
+                return ResourceManager.GetString("preset2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BORDERS
+        ///1
+        ///531*188*736*316*True*Color [Red]
+        ///WINDOWS
+        ///4
+        ///864*64*1007*176*True*Color [Blue]*True*1*156.5
+        ///169*277*433*450*True*Color [Blue]*True*40*277.5
+        ///821*330*963*426*True*Color [Blue]*True*1*155.5
+        ///196*71*350*146*True*Color [Blue]*True*1*167.5
+        ///SPAWNERS
+        ///2
+        ///594*45*True*0*6.28318530717959*10*100
+        ///591*481*False*0*6.28318530717959*10*100
+        ///FORM SIZE
+        ///1172,650
+        ///.
+        /// </summary>
+        internal static string preset3 {
+            get {
+                return ResourceManager.GetString("preset3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap spawnerImage {
+            get {
+                object obj = ResourceManager.GetObject("spawnerImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap spawnerImage2 {
+            get {
+                object obj = ResourceManager.GetObject("spawnerImage2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

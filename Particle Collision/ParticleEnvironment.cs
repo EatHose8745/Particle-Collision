@@ -6,14 +6,17 @@ using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
 using Newtonsoft.Json;
+using System.Resources;
 
 
 namespace Particle_Collision
 {
     public partial class ParticleEnvironment : Form
     {
-        //KD_Node KDTree = new KD_Node();
-        
+        KD_Node KDRootNode = new KD_Node();
+
+        private ResourceManager resourceManager = new ResourceManager("Particle_Collision.Properties.Resources", System.Reflection.Assembly.GetExecutingAssembly());
+
         private List<Particle> particlesReturn = new List<Particle>();
         public List<Particle> Particles = new List<Particle>();
         
@@ -62,6 +65,7 @@ namespace Particle_Collision
 
         private void ParticleEnvironment_Load(object sender, EventArgs e)
         {
+            LoadPresets();
             InitiliseRandom(ref random, randomSeed);
             AddParticles();
             InitiliseParticlesWithGravity();
@@ -69,6 +73,17 @@ namespace Particle_Collision
             TimerToggleButton.PerformClick();
             DrawBox.Refresh();
             refreshItemDesc();
+        }
+
+        void LoadPresets()
+        {
+            Directory.CreateDirectory($@"{mainDirectory}\Presets");
+            using (StreamWriter sw = new StreamWriter($@"{mainDirectory}\Presets\preset1.txt"))
+                sw.Write(resourceManager.GetString("preset1"));
+            using (StreamWriter sw = new StreamWriter($@"{mainDirectory}\Presets\preset2.txt"))
+                sw.Write(resourceManager.GetString("preset2"));
+            using (StreamWriter sw = new StreamWriter($@"{mainDirectory}\Presets\preset3.txt"))
+                sw.Write(resourceManager.GetString("preset3"));
         }
 
         void InitiliseRandom(ref Random random, string seed)
@@ -335,15 +350,14 @@ namespace Particle_Collision
 
         private void TickTimer_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine(isDrawing);
             for (int i = 0; i < Spawners.Count; i++)
             {
-                if (timerTicks % Spawners[i].Frequency == 0)
+                if (Spawners[i].Health > 0 && timerTicks % Spawners[i].Frequency == 0)
                 {
-                    bool infectious = Spawners[i].Colour == Color.Red ? true : false;
-                    AppendParticle(new Particle(new Vector2D(Spawners[i].Location.X, Spawners[i].Location.Y), Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(100), random.NextDouble() * Spawners[i].Angle + Spawners[i].Offset), 0, 10, 1, 1, infectious));
+                    AppendParticle(new Particle(new Vector2D(Spawners[i].Location.X, Spawners[i].Location.Y), Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(10), random.NextDouble() * Spawners[i].Angle + Spawners[i].Offset), 0, 4, 1, 1, Spawners[i].Infectious));
                 }
             }
+            //KDRootNode = KD_Tree.GenerateKDTree(Particles.Select(x => x.Location).ToList());
             for (int i = 0; i < Particles.Count; i++)
             {
                 for (int x = 0; x < particlesWithGravity.Count; x++)
@@ -362,25 +376,81 @@ namespace Particle_Collision
                         Particles[i].Velocity += Vector2D.FromSpeedAngle(Windows[x].PullMultiple * (G * Windows[x].Mass / (Vector2D.AbsoluteDifference(Particles[i].Location, Windows[x].Location)) * (Vector2D.AbsoluteDifference(Particles[i].Location, Windows[x].Location))) * TickTimer.Interval / 60, Vector2D.ReturnRelativeAngle(Particles[i].Location, Windows[x].Location));
                     }
                 }
-                if (!Particles[i].IsStationary)
-                    Particles[i].Update(gravity: gravity * TickTimer.Interval / 60);
                 if (Particles.Count > 1)
                 {
+                    // NOT USING KD TREE
                     for (int j = i + 1; j < Particles.Count; j++)
                     {
                         CheckForCollsions(Particles[i], Particles[j]);
                     }
 
-                    //CheckForCollsions(Particles[i], Particles.Find(p => p.Location == KD_Tree.NearestNeighbour(KDTree, Particles[i].Location, 0).Location));
+                    /* USING KD TREE NOT WORKING BUT WILL FIX
+                    if (KDRootNode != null)
+                        CheckForCollsions(Particles[i], Particles.Find(x => x.Location == KD_Tree.NearestNeighbour(KDRootNode, Particles[i].Location, 0).Location));
+                    */
                 }
-                CheckIfInGravitationalParticle(Particles[i]);
+                //CheckIfInGravitationalParticle(Particles[i]);
+                CheckIfInWindow(Particles[i]);
+                if (i >= Particles.Count)
+                    break;
+                CheckIfHittingSpawner(Particles[i]);
+                if (i >= Particles.Count)
+                    break;
                 CheckForBorderIntersect(Particles[i]);
                 CheckForWallCollision(Particles[i]);
-                CheckIfInWindow(Particles[i]);
+
+                if (!Particles[i].IsStationary)
+                    Particles[i].Update(gravity: gravity * TickTimer.Interval / 60);
             }
             timerTicks++;
             TimerTicksDisplay.Text = timerTicks.ToString();
             DrawBox.Refresh();
+        }
+
+        private void CheckIfHittingSpawner(Particle p)
+        {
+            if (!p.Infected)
+                return;
+
+            foreach (Spawner s in Spawners)
+            {
+                if (s.Health <= 0 || Vector2D.AbsoluteSquareDifference(new Vector2D(s.Location.X, s.Location.Y), p.Location) < Vector2D.AbsoluteSquareDifference(new Vector2D(s.Location.X, s.Location.Y), p.FutureLocationVector))
+                    continue;
+
+                int minX = s.Location.X - 25;
+                int maxX = s.Location.X + 25;
+
+                int minY = s.Location.Y - 25;
+                int maxY = s.Location.Y + 25;
+
+                if (p.Location.Y > minY && p.Location.Y < maxY)
+                {
+                    if (p.Location.X + p.Radius > minX && p.Location.X < maxX)
+                    {
+                        s.Health -= 1;
+                        continue;
+                    }
+                    else if (p.Location.X - p.Radius < maxX && p.Location.X > minX)
+                    {
+                        s.Health -= 1;
+                        continue;
+                    }
+                }
+
+                if (p.Location.X > minX && p.Location.X < maxX)
+                {
+                    if (p.Location.Y + p.Radius > minY && p.Location.Y < maxY)
+                    {
+                        s.Health -= 1;
+                        continue;
+                    }
+                    else if (p.Location.Y - p.Radius < maxY && p.Location.Y > minY)
+                    {
+                        s.Health -= 1;
+                        continue;
+                    }
+                }
+            }
         }
 
         private void TimerToggleButton_Click(object sender, EventArgs e)
@@ -435,35 +505,7 @@ namespace Particle_Collision
 
         private void RandomButton_Click(object sender, EventArgs e)
         {
-            ResetTimer();
-            Particles = new List<Particle>();
-            particlesWithGravity = new List<Particle>();
-            Borders = new List<Border>();
-            Windows = new List<Window>();
-            Spawners = new List<Spawner>();
-            bordersIndex = 0;
-            windowsIndex = 0;
-            spawnersIndex = 0;
-            for (int i = 0; i < randomParticlesNumber; i++)
-            {
-                Vector2D location = new Vector2D(random.Next(DrawBox.Width), random.Next(DrawBox.Height));
-                Vector2D velocity = new Vector2D(random.NextDouble() * random.Next(-10, 10), random.NextDouble() * random.Next(-10, 10));
-                //Vector2 velocity = new Vector2();
-                double pullAcceleration = 0;
-                //double radius = random.Next(10, 31);
-                double radius = 20;
-                //double mass = random.NextDouble() * random.Next(1, 31);
-                double mass = 1;
-                //double hardness = random.NextDouble();
-                double hardness = 1;
-                Color colour = Color.FromArgb(255, random.Next(256), random.Next(256), random.Next(256));
-                AppendParticle(new Particle(location, velocity, pullAcceleration, radius, mass, hardness));
-                CheckForWallCollision(Particles[i]);
-            }
-            SetTerminalVelocity();
-            InitiliseParticlesWithGravity();
-            
-            DrawBox.Refresh();
+            // Need to add random scene generation
         }
 
         private void DrawBox_Paint(object sender, PaintEventArgs e)
@@ -499,7 +541,26 @@ namespace Particle_Collision
             }
             foreach (Spawner s in Spawners)
             {
-                e.Graphics.FillEllipse(new SolidBrush(s.Colour), (float)s.Location.X, (float)s.Location.Y, (float)5, (float)5);
+                //e.Graphics.FillEllipse(new SolidBrush(s.Colour), (float)s.Location.X, (float)s.Location.Y, (float)5, (float)5);
+
+                // BEN WORNES MODE !DELETE BEFORE HAND-IN!
+                //e.Graphics.DrawImage((Image)resourceManager.GetObject("spawnerImage"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                e.Graphics.ResetTransform();
+                //e.Graphics.TranslateTransform(this.Width / 2, this.Height / 2);
+                e.Graphics.TranslateTransform(((float)s.Location.X), ((float)s.Location.Y));
+                if (!(s.Offset == 0 && s.Angle == 2 * Math.PI))
+                    e.Graphics.RotateTransform((float)((s.Offset + (s.Angle / 2)) * (180 / Math.PI)));
+                //e.Graphics.RotateTransform(45.0F);
+                e.Graphics.TranslateTransform(-((float)s.Location.X), -((float)s.Location.Y));
+                if (s.Infectious)
+                {
+                    e.Graphics.DrawImage((Image)resourceManager.GetObject("infectiousSpawner"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                }
+                else
+                {
+                    e.Graphics.DrawImage((Image)resourceManager.GetObject("normalSpawner"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                }
+                e.Graphics.FillRectangle(new SolidBrush(Color.Green), new Rectangle(s.Location.X - 25, s.Location.Y - 40, (int)(50 * ((double)s.Health / 100)), 10));
             }
         }
 
@@ -518,23 +579,21 @@ namespace Particle_Collision
                 case "BorderRadio":
                     nullBorder = new Border(e.Location.X, e.Location.Y, 0, 0, Color.Red, true);
                     nullBorder.Hardness = 1;
-                    nullBorder.Mass = 1;
                     Borders.Add(nullBorder);
                     break;
                 case "WindowRadio":
                     nullWindow = new Window(e.Location.X, e.Location.Y, 0, 0, 10, Color.Blue, true);
                     nullWindow.Hardness = 1;
-                    nullWindow.Mass = 1;
                     Windows.Add(nullWindow);
                     break;
                 case "SpawnerRadio":
-                    nullSpawner = new Spawner(e.Location.X, e.Location.Y, Color.Black);
+                    nullSpawner = new Spawner(e.Location.X, e.Location.Y, false);
                     InputBox spawnerConfig = new InputBox("Offset:", "Angle:", "Frequency:");
                     spawnerConfig.ShowDialog();
                     nullSpawner.Angle = double.TryParse(spawnerConfig.Input2String, out _) ? double.Parse(spawnerConfig.Input2String) * (Math.PI / 180) : 2 * Math.PI;
                     nullSpawner.Offset = double.TryParse(spawnerConfig.InputString, out _) ? double.Parse(spawnerConfig.InputString) * (Math.PI / 180) : 0;
-                    nullSpawner.Frequency = int.TryParse(spawnerConfig.Input3String, out _) ?  int.Parse(spawnerConfig.Input3String) : 200;
-                    nullSpawner.Colour = spawnerConfig.Infectious ? Color.Red : Color.Blue;
+                    nullSpawner.Frequency = int.TryParse(spawnerConfig.Input3String, out _) ?  int.Parse(spawnerConfig.Input3String) : nullSpawner.Frequency;
+                    nullSpawner.Infectious = spawnerConfig.Infectious ? true : false;
                     spawnerConfig.Dispose();
                     Spawners.Add(nullSpawner);
                     spawnersIndex++;
@@ -660,11 +719,11 @@ namespace Particle_Collision
 
                 for (int i = 0; i < Spawners.Count; i++)
                 {
-                    int minX = (int)Spawners[i].Location.X - 5;
-                    int maxX = (int)Spawners[i].Location.X + 5;
+                    int minX = (int)Spawners[i].Location.X - 50;
+                    int maxX = (int)Spawners[i].Location.X + 50;
 
-                    int minY = (int)Spawners[i].Location.Y - 5;
-                    int maxY = (int)Spawners[i].Location.Y + 5;
+                    int minY = (int)Spawners[i].Location.Y - 50;
+                    int maxY = (int)Spawners[i].Location.Y + 50;
 
                     if (minX <= e.X && maxX >= e.X && minY <= e.Y && maxY >= e.Y)
                     {
@@ -710,26 +769,36 @@ namespace Particle_Collision
                  timerRunning = true;
              }
              */
-            string fileName = $@"{mainDirectory}\saves\save1.txt";
-            using (StreamWriter writer = new StreamWriter(fileName))
+                    Directory.CreateDirectory($@"{mainDirectory}\Saves");
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = mainDirectory;
+            sfd.Filter = "Text files (*.txt)|*.txt";
+            if (sfd.ShowDialog() == DialogResult.OK)
             {
-                writer.WriteLine("BORDERS");
-                writer.WriteLine(Convert.ToString(Borders.Count));
-                foreach (Border b in Borders)
+                string fileName = sfd.FileName;
+                using (StreamWriter writer = new StreamWriter(fileName))
                 {
-                    writer.WriteLine(b.GetBorderInfoForSaving());
-                }
-                writer.WriteLine("WINDOWS");
-                writer.WriteLine(Convert.ToString(Windows.Count));
-                foreach (Window w in Windows)
-                {
-                    writer.WriteLine(w.getWindowInfoForSaving());
-                }
-                writer.WriteLine("SPAWNERS");
-                writer.WriteLine(Convert.ToString(Spawners.Count));
-                foreach (Spawner s in Spawners)
-                {
-                    writer.WriteLine(s.getSpawnerInfoForSaving());
+                    writer.WriteLine("BORDERS");
+                    writer.WriteLine(Convert.ToString(Borders.Count));
+                    foreach (Border b in Borders)
+                    {
+                        writer.WriteLine(b.GetBorderInfoForSaving());
+                    }
+                    writer.WriteLine("WINDOWS");
+                    writer.WriteLine(Convert.ToString(Windows.Count));
+                    foreach (Window w in Windows)
+                    {
+                        writer.WriteLine(w.getWindowInfoForSaving());
+                    }
+                    writer.WriteLine("SPAWNERS");
+                    writer.WriteLine(Convert.ToString(Spawners.Count));
+                    foreach (Spawner s in Spawners)
+                    {
+                        writer.WriteLine(s.getSpawnerInfoForSaving());
+                    }
+                    writer.WriteLine("FORM SIZE");
+                    writer.WriteLine($"{this.Size.Width},{this.Size.Height}");
                 }
             }
         }
@@ -745,38 +814,51 @@ namespace Particle_Collision
                 DrawBox.Refresh();
             } */
 
+            Directory.CreateDirectory($@"{mainDirectory}\Saves");
 
             // Delete all current items
             ResetButton_Click(sender, e);
 
-            string fileName = $@"{mainDirectory}\saves\save1.txt";
-            using (StreamReader reader = new StreamReader(fileName))
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = mainDirectory;
+            ofd.Filter = "Text files (*.txt)|*.txt";
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
             {
-                reader.ReadLine(); //BORDERS 
-                int numBorders = Convert.ToInt32(reader.ReadLine());
-                for (int i = 0; i < numBorders; i++)
-                { 
-                    Border b = new Border(reader.ReadLine());
-                    Borders.Add(b);
-                }
-                reader.ReadLine(); //WINDOWS
-                int numWindows = Convert.ToInt32(reader.ReadLine());
-                for (int i = 0; i < numWindows; i++)
+                string fileName = ofd.FileName;
+                using (StreamReader reader = new StreamReader(fileName))
                 {
-                    Window w = new Window(reader.ReadLine());
-                    Windows.Add(w);
+                    reader.ReadLine(); //BORDERS 
+                    int numBorders = Convert.ToInt32(reader.ReadLine());
+                    for (int i = 0; i < numBorders; i++)
+                    {
+                        Border b = new Border(reader.ReadLine());
+                        Borders.Add(b);
+                    }
+                    reader.ReadLine(); //WINDOWS
+                    int numWindows = Convert.ToInt32(reader.ReadLine());
+                    for (int i = 0; i < numWindows; i++)
+                    {
+                        Window w = new Window(reader.ReadLine());
+                        Windows.Add(w);
+                    }
+                    reader.ReadLine(); //SPAWNERS
+                    int numSpawners = Convert.ToInt32(reader.ReadLine());
+                    for (int i = 0; i < numSpawners; i++)
+                    {
+                        Spawner s = new Spawner(reader.ReadLine());
+                        Spawners.Add(s);
+                    }
+                    reader.ReadLine(); //FORM SIZE
+                    string[] formSizes = reader.ReadLine().Split(',');
+                    this.Width = Convert.ToInt32(formSizes[0]);
+                    this.Height = Convert.ToInt32(formSizes[1]);
+                    this.CenterToScreen();
                 }
-                reader.ReadLine(); //SPAWNERS
-                int numSpawners = Convert.ToInt32(reader.ReadLine());
-                for (int i = 0; i < numSpawners; i++)
-                {
-                    Spawner s = new Spawner(reader.ReadLine());
-                    Spawners.Add(s);
-                }
+                //TickTimer_Tick(sender, new EventArgs());
+                Particles.Clear();
+                TickTimer_Tick(sender, new EventArgs());
             }
-            TickTimer_Tick(sender, new EventArgs());
-            Particles.Clear();
-            TickTimer_Tick(sender, new EventArgs());
         }
         private void GenerateSaveFolder()
         {

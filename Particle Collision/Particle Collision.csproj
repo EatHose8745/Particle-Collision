@@ -139,6 +139,36 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\spawnerImage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\spawnerImage2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\infectiousSpawner.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\normalSpawner.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Saves\preset1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Saves\preset2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Saves\preset3.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preset3.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preset1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preset2.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
