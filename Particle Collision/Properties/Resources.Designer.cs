@@ -63,9 +63,9 @@ namespace Particle_Collision.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap infectiousSpawner {
+        internal static System.Drawing.Bitmap character1Small {
             get {
-                object obj = ResourceManager.GetObject("infectiousSpawner", resourceCulture);
+                object obj = ResourceManager.GetObject("character1Small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Particle_Collision.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap normalSpawner {
+        internal static System.Drawing.Bitmap character1SmallInfected {
             get {
-                object obj = ResourceManager.GetObject("normalSpawner", resourceCulture);
+                object obj = ResourceManager.GetObject("character1SmallInfected", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -147,26 +147,6 @@ namespace Particle_Collision.Properties {
         internal static string preset3 {
             get {
                 return ResourceManager.GetString("preset3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap spawnerImage {
-            get {
-                object obj = ResourceManager.GetObject("spawnerImage", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap spawnerImage2 {
-            get {
-                object obj = ResourceManager.GetObject("spawnerImage2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

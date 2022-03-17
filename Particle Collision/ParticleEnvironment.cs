@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.IO;
 using Newtonsoft.Json;
 using System.Resources;
+using Particle_Collision.Properties;
 
 
 namespace Particle_Collision
@@ -28,7 +29,7 @@ namespace Particle_Collision
         public List<Window> Windows = new List<Window>();
         public List<Spawner> Spawners = new List<Spawner>();
 
-        public List<object> selectedObjects = new List<object>();
+        //public List<object> selectedObjects = new List<object>();
 
         private int bordersIndex = 0;
         private Border nullBorder = null;
@@ -51,7 +52,7 @@ namespace Particle_Collision
         private bool autoSetTerminalSpeed = false;
         private double wallHardness = 1;
         private double groundRoofHardness = 1;
-        private int randomParticlesNumber = 10;
+        //private int randomParticlesNumber = 10;
         private string randomSeed = "TestSeed";
         private Random random;
 
@@ -352,9 +353,19 @@ namespace Particle_Collision
         {
             for (int i = 0; i < Spawners.Count; i++)
             {
-                if (Spawners[i].Health > 0 && timerTicks % Spawners[i].Frequency == 0)
+                if (timerTicks % Spawners[i].Frequency == 0)
                 {
-                    AppendParticle(new Particle(new Vector2D(Spawners[i].Location.X, Spawners[i].Location.Y), Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(10), random.NextDouble() * Spawners[i].Angle + Spawners[i].Offset), 0, 4, 1, 1, Spawners[i].Infectious));
+                    Vector2D location = new Vector2D(Spawners[i].Location.X, Spawners[i].Location.Y);
+                    double angle = Spawners[i].Offset + (random.NextDouble() * Spawners[i].Angle) - (Math.PI / 2);
+                    Vector2D velocity = Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(1, 10), angle);
+
+                    double graviationalMultiple = 0;
+                    double mass = 0;
+                    double hardness = 1;
+                    bool infected = Spawners[i].Infectious;
+                    double radius = Spawners[i].ParticleRadius;
+
+                    AppendParticle(new Particle(location, velocity, graviationalMultiple, radius, mass, hardness, infected));
                 }
             }
             //KDRootNode = KD_Tree.GenerateKDTree(Particles.Select(x => x.Location).ToList());
@@ -414,8 +425,16 @@ namespace Particle_Collision
 
             foreach (Spawner s in Spawners)
             {
+                /*
                 if (s.Health <= 0 || Vector2D.AbsoluteSquareDifference(new Vector2D(s.Location.X, s.Location.Y), p.Location) < Vector2D.AbsoluteSquareDifference(new Vector2D(s.Location.X, s.Location.Y), p.FutureLocationVector))
                     continue;
+                */
+
+                if (s.Health <= 0)
+                {
+                    s.Infectious = true;
+                    continue;
+                }
 
                 int minX = s.Location.X - 25;
                 int maxX = s.Location.X + 25;
@@ -514,7 +533,7 @@ namespace Particle_Collision
             foreach (Particle p in Particles)
             {
                 e.Graphics.FillEllipse(new SolidBrush(p.Colour), (float)p.Location.X - (float)p.Radius, (float)p.Location.Y - (float)p.Radius, (float)p.Radius + (float)p.Radius, (float)p.Radius + (float)p.Radius);
-                e.Graphics.DrawLine(new Pen(Color.Black), (float)p.Location.X, (float)p.Location.Y, (float)p.Location.X + (float)p.Velocity.X, (float)p.Location.Y + (float)p.Velocity.Y);
+                //e.Graphics.DrawLine(new Pen(Color.Black), (float)p.Location.X, (float)p.Location.Y, (float)p.Location.X + (float)p.Velocity.X, (float)p.Location.Y + (float)p.Velocity.Y);
             }
             foreach (Border b in Borders)
             {
@@ -550,17 +569,21 @@ namespace Particle_Collision
                 e.Graphics.TranslateTransform(((float)s.Location.X), ((float)s.Location.Y));
                 if (!(s.Offset == 0 && s.Angle == 2 * Math.PI))
                     e.Graphics.RotateTransform((float)((s.Offset + (s.Angle / 2)) * (180 / Math.PI)));
+                else
+                    e.Graphics.RotateTransform((float)(Math.PI * (180 / Math.PI)));
                 //e.Graphics.RotateTransform(45.0F);
                 e.Graphics.TranslateTransform(-((float)s.Location.X), -((float)s.Location.Y));
                 if (s.Infectious)
                 {
-                    e.Graphics.DrawImage((Image)resourceManager.GetObject("infectiousSpawner"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                    //e.Graphics.DrawImage((Image)resourceManager.GetObject("infectiousSpawner"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                    e.Graphics.DrawImage(Resources.character1SmallInfected, (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
                 }
                 else
                 {
-                    e.Graphics.DrawImage((Image)resourceManager.GetObject("normalSpawner"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                    //e.Graphics.DrawImage((Image)resourceManager.GetObject("normalSpawner"), (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                    e.Graphics.DrawImage(Resources.character1Small, (float)s.Location.X - 25, (float)s.Location.Y - 25, (float)50, (float)50);
+                    e.Graphics.FillRectangle(new SolidBrush(Color.Green), new Rectangle(s.Location.X - 25, s.Location.Y - 40, (int)(50 * ((double)s.Health / 100)), 10));
                 }
-                e.Graphics.FillRectangle(new SolidBrush(Color.Green), new Rectangle(s.Location.X - 25, s.Location.Y - 40, (int)(50 * ((double)s.Health / 100)), 10));
             }
         }
 
@@ -588,12 +611,13 @@ namespace Particle_Collision
                     break;
                 case "SpawnerRadio":
                     nullSpawner = new Spawner(e.Location.X, e.Location.Y, false);
-                    InputBox spawnerConfig = new InputBox("Offset:", "Angle:", "Frequency:");
+                    InputBox spawnerConfig = new InputBox("Offset:", "Angle:", "Frequency:", "Particle Radius:");
                     spawnerConfig.ShowDialog();
                     nullSpawner.Angle = double.TryParse(spawnerConfig.Input2String, out _) ? double.Parse(spawnerConfig.Input2String) * (Math.PI / 180) : 2 * Math.PI;
                     nullSpawner.Offset = double.TryParse(spawnerConfig.InputString, out _) ? double.Parse(spawnerConfig.InputString) * (Math.PI / 180) : 0;
                     nullSpawner.Frequency = int.TryParse(spawnerConfig.Input3String, out _) ?  int.Parse(spawnerConfig.Input3String) : nullSpawner.Frequency;
                     nullSpawner.Infectious = spawnerConfig.Infectious ? true : false;
+                    nullSpawner.ParticleRadius = spawnerConfig.Slider1Value;
                     spawnerConfig.Dispose();
                     Spawners.Add(nullSpawner);
                     spawnersIndex++;
@@ -857,7 +881,8 @@ namespace Particle_Collision
                 }
                 //TickTimer_Tick(sender, new EventArgs());
                 Particles.Clear();
-                TickTimer_Tick(sender, new EventArgs());
+                //TickTimer_Tick(sender, new EventArgs());
+                DrawBox.Refresh();
             }
         }
         private void GenerateSaveFolder()
@@ -1004,6 +1029,17 @@ namespace Particle_Collision
             ItemDesc.Text = "LOAD: This button loads back your saved environments.";
         }
         private void LoadButton_MouseLeave(object sender, EventArgs e){refreshItemDesc();}
+
+        private void TickPerSecondSlider_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TickPerSecondSlider_ValueChanged(object sender, EventArgs e)
+        {
+            this.TickTimer.Interval = 1000 / this.TickPerSecondSlider.Value;
+            this.TicksPerSecondLabel.Text = $"Ticks/s: {this.TickPerSecondSlider.Value.ToString()}";
+        }
     }
 
     public class BorderData

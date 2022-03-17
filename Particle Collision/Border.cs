@@ -37,6 +37,7 @@ namespace Particle_Collision
         {
             get { return 1; }
         }
+
         public int Hardness
         {
             get;

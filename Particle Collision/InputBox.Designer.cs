@@ -36,6 +36,10 @@
             this.InfectiousCheck = new System.Windows.Forms.CheckBox();
             this.Value3Label = new System.Windows.Forms.Label();
             this.Value3Textbox = new System.Windows.Forms.TextBox();
+            this.Slider1 = new System.Windows.Forms.TrackBar();
+            this.Value4Label = new System.Windows.Forms.Label();
+            this.Silder1ValueLabel = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.Slider1)).BeginInit();
             this.SuspendLayout();
             // 
             // Value1Label
@@ -55,7 +59,7 @@
             // 
             // OKButton
             // 
-            this.OKButton.Location = new System.Drawing.Point(197, 112);
+            this.OKButton.Location = new System.Drawing.Point(197, 149);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 2;
@@ -103,11 +107,40 @@
             this.Value3Textbox.Size = new System.Drawing.Size(100, 20);
             this.Value3Textbox.TabIndex = 6;
             // 
+            // Slider1
+            // 
+            this.Slider1.Location = new System.Drawing.Point(12, 142);
+            this.Slider1.Minimum = 1;
+            this.Slider1.Name = "Slider1";
+            this.Slider1.Size = new System.Drawing.Size(100, 45);
+            this.Slider1.TabIndex = 8;
+            this.Slider1.Value = 4;
+            this.Slider1.ValueChanged += new System.EventHandler(this.Slider1_ValueChanged);
+            // 
+            // Value4Label
+            // 
+            this.Value4Label.AutoSize = true;
+            this.Value4Label.Location = new System.Drawing.Point(12, 126);
+            this.Value4Label.Name = "Value4Label";
+            this.Value4Label.Size = new System.Drawing.Size(0, 13);
+            this.Value4Label.TabIndex = 9;
+            // 
+            // Silder1ValueLabel
+            // 
+            this.Silder1ValueLabel.AutoSize = true;
+            this.Silder1ValueLabel.Location = new System.Drawing.Point(115, 149);
+            this.Silder1ValueLabel.Name = "Silder1ValueLabel";
+            this.Silder1ValueLabel.Size = new System.Drawing.Size(0, 13);
+            this.Silder1ValueLabel.TabIndex = 10;
+            // 
             // InputBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 147);
+            this.ClientSize = new System.Drawing.Size(284, 184);
+            this.Controls.Add(this.Silder1ValueLabel);
+            this.Controls.Add(this.Value4Label);
+            this.Controls.Add(this.Slider1);
             this.Controls.Add(this.Value3Label);
             this.Controls.Add(this.Value3Textbox);
             this.Controls.Add(this.InfectiousCheck);
@@ -122,6 +155,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "InputBox";
+            ((System.ComponentModel.ISupportInitialize)(this.Slider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -137,5 +171,8 @@
         private System.Windows.Forms.CheckBox InfectiousCheck;
         private System.Windows.Forms.Label Value3Label;
         private System.Windows.Forms.TextBox Value3Textbox;
+        private System.Windows.Forms.TrackBar Slider1;
+        private System.Windows.Forms.Label Value4Label;
+        private System.Windows.Forms.Label Silder1ValueLabel;
     }
 }

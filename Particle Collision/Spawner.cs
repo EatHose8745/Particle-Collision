@@ -15,8 +15,9 @@ namespace Particle_Collision
         public double Angle { get; set; }
         public int Frequency { get; set; }
         public int Health { get; set; }
+        public int ParticleRadius { get; set; }
 
-        public Spawner(int x, int y, bool infectious, double offset = 0, double angle = 2 * Math.PI, int frequency = 10, int health = 100)
+        public Spawner(int x, int y, bool infectious, double offset = 0, double angle = 2 * Math.PI, int frequency = 10, int health = 100,  int particleRadius = 4)
         {
             this.Location = new Point(x, y);
             this.Infectious = infectious;
@@ -24,12 +25,13 @@ namespace Particle_Collision
             this.Angle = angle;
             this.Frequency = frequency;
             this.Health = health;
+            this.ParticleRadius = particleRadius;
         }
 
         public string getSpawnerInfoForSaving()
         {
             string info = "";
-            info = Convert.ToString(Location.X) + "*" + Convert.ToString(Location.Y) + "*" + Infectious.ToString() + "*" + Offset.ToString() + "*" + Angle.ToString() + "*" + Frequency.ToString() + "*" + Health.ToString();
+            info = Convert.ToString(Location.X) + "*" + Convert.ToString(Location.Y) + "*" + Infectious.ToString() + "*" + Offset.ToString() + "*" + Angle.ToString() + "*" + Frequency.ToString() + "*" + Health.ToString() + "*" + ParticleRadius.ToString();
             return info;
         }
 
@@ -37,11 +39,12 @@ namespace Particle_Collision
         {
             string[] infoArray = info.Split('*');
             this.Location = new Point(Convert.ToInt32(infoArray[0]), Convert.ToInt32(infoArray[1]));
-            this.Infectious = infoArray[2] == "True" ? true : false;
+            this.Infectious = infoArray[2] == "True";
             this.Offset = Convert.ToDouble(infoArray[3]);
             this.Angle = Convert.ToDouble(infoArray[4]);
             this.Frequency = Convert.ToInt32(infoArray[5]);
             this.Health = Convert.ToInt32(infoArray[6]);
+            this.ParticleRadius = Convert.ToInt32(infoArray[7]);
         }
     }
 }

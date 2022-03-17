@@ -47,9 +47,12 @@ namespace Particle_Collision
             this.ItemDesc = new System.Windows.Forms.Label();
             this.HoverDescription = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.TickPerSecondSlider = new System.Windows.Forms.TrackBar();
+            this.TicksPerSecondLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DrawBox)).BeginInit();
             this.ButtonPanel.SuspendLayout();
             this.DescPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TickPerSecondSlider)).BeginInit();
             this.SuspendLayout();
             // 
             // DrawBox
@@ -101,6 +104,8 @@ namespace Particle_Collision
             // 
             // ButtonPanel
             // 
+            this.ButtonPanel.Controls.Add(this.TicksPerSecondLabel);
+            this.ButtonPanel.Controls.Add(this.TickPerSecondSlider);
             this.ButtonPanel.Controls.Add(this.LoadButton);
             this.ButtonPanel.Controls.Add(this.SaveButton);
             this.ButtonPanel.Controls.Add(this.SpawnerRadio);
@@ -147,7 +152,7 @@ namespace Particle_Collision
             // 
             this.SpawnerRadio.AutoSize = true;
             this.SpawnerRadio.ForeColor = System.Drawing.Color.White;
-            this.SpawnerRadio.Location = new System.Drawing.Point(3, 331);
+            this.SpawnerRadio.Location = new System.Drawing.Point(3, 414);
             this.SpawnerRadio.Name = "SpawnerRadio";
             this.SpawnerRadio.Size = new System.Drawing.Size(67, 17);
             this.SpawnerRadio.TabIndex = 8;
@@ -160,7 +165,7 @@ namespace Particle_Collision
             // 
             this.WindowRadio.AutoSize = true;
             this.WindowRadio.ForeColor = System.Drawing.Color.White;
-            this.WindowRadio.Location = new System.Drawing.Point(3, 308);
+            this.WindowRadio.Location = new System.Drawing.Point(3, 391);
             this.WindowRadio.Name = "WindowRadio";
             this.WindowRadio.Size = new System.Drawing.Size(64, 17);
             this.WindowRadio.TabIndex = 7;
@@ -174,7 +179,7 @@ namespace Particle_Collision
             this.NoneRadio.AutoSize = true;
             this.NoneRadio.Checked = true;
             this.NoneRadio.ForeColor = System.Drawing.Color.White;
-            this.NoneRadio.Location = new System.Drawing.Point(3, 262);
+            this.NoneRadio.Location = new System.Drawing.Point(3, 345);
             this.NoneRadio.Name = "NoneRadio";
             this.NoneRadio.Size = new System.Drawing.Size(51, 17);
             this.NoneRadio.TabIndex = 6;
@@ -188,7 +193,7 @@ namespace Particle_Collision
             // 
             this.BorderRadio.AutoSize = true;
             this.BorderRadio.ForeColor = System.Drawing.Color.White;
-            this.BorderRadio.Location = new System.Drawing.Point(3, 285);
+            this.BorderRadio.Location = new System.Drawing.Point(3, 368);
             this.BorderRadio.Name = "BorderRadio";
             this.BorderRadio.Size = new System.Drawing.Size(56, 17);
             this.BorderRadio.TabIndex = 5;
@@ -257,6 +262,28 @@ namespace Particle_Collision
             this.label1.TabIndex = 0;
             this.label1.Text = "label1";
             // 
+            // TickPerSecondSlider
+            // 
+            this.TickPerSecondSlider.Location = new System.Drawing.Point(3, 253);
+            this.TickPerSecondSlider.Maximum = 1000;
+            this.TickPerSecondSlider.Minimum = 10;
+            this.TickPerSecondSlider.Name = "TickPerSecondSlider";
+            this.TickPerSecondSlider.Size = new System.Drawing.Size(75, 45);
+            this.TickPerSecondSlider.TabIndex = 11;
+            this.TickPerSecondSlider.Value = 1000;
+            this.TickPerSecondSlider.Scroll += new System.EventHandler(this.TickPerSecondSlider_Scroll);
+            this.TickPerSecondSlider.ValueChanged += new System.EventHandler(this.TickPerSecondSlider_ValueChanged);
+            // 
+            // TicksPerSecondLabel
+            // 
+            this.TicksPerSecondLabel.AutoSize = true;
+            this.TicksPerSecondLabel.ForeColor = System.Drawing.Color.White;
+            this.TicksPerSecondLabel.Location = new System.Drawing.Point(3, 301);
+            this.TicksPerSecondLabel.Name = "TicksPerSecondLabel";
+            this.TicksPerSecondLabel.Size = new System.Drawing.Size(68, 13);
+            this.TicksPerSecondLabel.TabIndex = 12;
+            this.TicksPerSecondLabel.Text = "Tick/s: 1000";
+            // 
             // ParticleEnvironment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -277,6 +304,7 @@ namespace Particle_Collision
             this.ButtonPanel.PerformLayout();
             this.DescPanel.ResumeLayout(false);
             this.DescPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TickPerSecondSlider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -300,6 +328,8 @@ namespace Particle_Collision
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label HoverDescription;
         private System.Windows.Forms.Label ItemDesc;
+        private System.Windows.Forms.TrackBar TickPerSecondSlider;
+        private System.Windows.Forms.Label TicksPerSecondLabel;
     }
 }
 

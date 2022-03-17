@@ -118,11 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="infectiousSpawner" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\infectiousSpawner.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="character1Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\character1Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="normalSpawner" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\normalSpawner.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="character1SmallInfected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\character1SmallInfected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="preset1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\preset1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -132,11 +132,5 @@
   </data>
   <data name="preset3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\preset3.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="spawnerImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\spawnerimage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="spawnerImage2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\spawnerImage2.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
