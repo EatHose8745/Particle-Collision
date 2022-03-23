@@ -495,6 +495,10 @@ namespace Particle_Collision
             bordersIndex = 0;
             windowsIndex = 0;
             spawnersIndex = 0;
+            nullBorder = null;
+            nullSpawner = null;
+            nullWindow = null;
+            isDrawing = false;
             Borders.Clear();
             Windows.Clear();
             Spawners.Clear();
@@ -879,6 +883,9 @@ namespace Particle_Collision
                     this.Height = Convert.ToInt32(formSizes[1]);
                     this.CenterToScreen();
                 }
+                this.bordersIndex = this.Borders.Count;
+                this.windowsIndex = this.Windows.Count;
+                this.spawnersIndex = this.Spawners.Count;
                 //TickTimer_Tick(sender, new EventArgs());
                 Particles.Clear();
                 //TickTimer_Tick(sender, new EventArgs());

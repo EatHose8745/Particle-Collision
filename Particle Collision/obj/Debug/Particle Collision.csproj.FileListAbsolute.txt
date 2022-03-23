@@ -180,4 +180,3 @@ C:\MEGA\A-Level\Computer Science\NEA\26-02-2022\Particle-Collision\Particle Coll
 C:\MEGA\A-Level\Computer Science\NEA\26-02-2022\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.CopyComplete
 C:\MEGA\A-Level\Computer Science\NEA\26-02-2022\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.exe
 C:\MEGA\A-Level\Computer Science\NEA\26-02-2022\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.pdb
-C:\Users\Joel\Documents\C# Projects\Particle-Collision\Particle Collision\obj\Debug\Particle Collision.csproj.AssemblyReference.cache
