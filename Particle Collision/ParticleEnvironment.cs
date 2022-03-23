@@ -360,7 +360,7 @@ namespace Particle_Collision
                     Vector2D velocity = Vector2D.FromSpeedAngle(random.NextDouble() * random.Next(1, 10), angle);
 
                     double graviationalMultiple = 0;
-                    double mass = 0;
+                    double mass = 1;
                     double hardness = 1;
                     bool infected = Spawners[i].Infectious;
                     double radius = Spawners[i].ParticleRadius;
