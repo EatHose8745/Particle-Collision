@@ -368,7 +368,8 @@ namespace Particle_Collision
                     AppendParticle(new Particle(location, velocity, graviationalMultiple, radius, mass, hardness, infected));
                 }
             }
-            //KDRootNode = KD_Tree.GenerateKDTree(Particles.Select(x => x.Location).ToList());
+            KDRootNode = KD_Tree.GenerateKDTree(Particles);
+            
             for (int i = 0; i < Particles.Count; i++)
             {
                 for (int x = 0; x < particlesWithGravity.Count; x++)
@@ -390,15 +391,21 @@ namespace Particle_Collision
                 if (Particles.Count > 1)
                 {
                     // NOT USING KD TREE
+                    /*
                     for (int j = i + 1; j < Particles.Count; j++)
                     {
                         CheckForCollsions(Particles[i], Particles[j]);
                     }
-
-                    /* USING KD TREE NOT WORKING BUT WILL FIX
-                    if (KDRootNode != null)
-                        CheckForCollsions(Particles[i], Particles.Find(x => x.Location == KD_Tree.NearestNeighbour(KDRootNode, Particles[i].Location, 0).Location));
                     */
+
+                    //USING KD TREE NOT WORKING BUT WILL FIX
+                    if (KDRootNode != null)
+                    {
+                        KD_Node query = new KD_Node();
+                        query.particle = Particles[i];
+                        CheckForCollsions(Particles[i], Particles.Find(x => x.Location == KD_Tree.NearestNeighbourSearch(KDRootNode, query).particle.Location));
+                    }
+                    
                 }
                 //CheckIfInGravitationalParticle(Particles[i]);
                 CheckIfInWindow(Particles[i]);

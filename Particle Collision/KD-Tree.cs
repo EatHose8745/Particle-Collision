@@ -8,7 +8,7 @@ namespace Particle_Collision
 {
     public static class KD_Tree
     {
-        public static KD_Node GenerateKDTree(List<Vector2D> particles, int depth = 0)
+        public static KD_Node GenerateKDTree(List<Particle> particles, int depth = 0)
         {
             if (particles.Count == 0)
                 return null;
@@ -17,47 +17,50 @@ namespace Particle_Collision
 
             int A = depth % Vector2D.Dimensions;
 
-            particles = A == 0 ? particles.OrderBy(p => p.X).ToList() : particles.OrderBy(p => p.Y).ToList();
+            particles = A == 0 ? particles.OrderBy(p => p.Location.X).ToList() : particles.OrderBy(p => p.Location.Y).ToList();
 
             int medianIndex = particles.Count / 2;
-            Vector2D median = particles[medianIndex];
+            Particle median = particles[medianIndex];
 
-            node.Location = median;
-            node.LeftChild = KD_Tree.GenerateKDTree(particles.GetRange(0, medianIndex), depth + 1);
-            node.RightChild = KD_Tree.GenerateKDTree(particles.GetRange(medianIndex + 1, particles.Count - (medianIndex + 1)), depth + 1);
+            node.particle = median;
+            node.leftChild = KD_Tree.GenerateKDTree(particles.GetRange(0, medianIndex), depth + 1);
+            node.leftChild = KD_Tree.GenerateKDTree(particles.GetRange(medianIndex + 1, particles.Count - (medianIndex + 1)), depth + 1);
+
             return node;
         }
 
-        public static KD_Node NearestNeighbour(KD_Node root, Vector2D target, int depth)
+        public static KD_Node NearestNeighbourSearch(KD_Node root, KD_Node queryNode)
         {
-            if (root == null)
-                return null;
+            KD_Node nearestNode = NNSRecursive(root, queryNode, 0);
 
-            KD_Node nextBranch;
-            KD_Node otherBranch;
+            return nearestNode;
+        }
 
-            if (Vector2D.AbsoluteSquareDifference(root.Location, root.LeftChild.Location) > Vector2D.AbsoluteSquareDifference(root.Location, root.RightChild.Location))
+        private static KD_Node NNSRecursive(KD_Node current, KD_Node target, int depth)
+        {
+            int axis = depth * Vector2D.Dimensions;
+            double direction = axis == 0 ? target.particle.Location.X - current.particle.Location.X : target.particle.Location.Y - current.particle.Location.Y;
+            KD_Node next = direction < 0 ? current.leftChild : current.rightChild;
+            KD_Node other = direction < 0 ? current.rightChild : current.leftChild;
+
+            KD_Node best = (next == null) ? current : NNSRecursive(next, target, depth + 1);
+
+            if (Vector2D.AbsoluteSquareDifference(current.particle.Location, target.particle.Location) < Vector2D.AbsoluteSquareDifference(best.particle.Location, target.particle.Location))
             {
-                nextBranch = root.RightChild;
-                otherBranch = root.LeftChild;
+                best = current;
             }
-            else
+
+            if (!(other is null))
             {
-                nextBranch = root.LeftChild;
-                otherBranch = root.RightChild;
-            }
-
-            KD_Node temp = NearestNeighbour(nextBranch, target, depth + 1);
-            KD_Node best = Vector2D.Closest(temp.Location, root.Location, target) == temp.Location ? temp : root;
-
-            double radiusSquared = Vector2D.AbsoluteSquareDifference(target, best.Location);
-
-            double dist = Vector2D.AbsoluteSquareDifference(root.Location, root.LeftChild.Location) - Vector2D.AbsoluteSquareDifference(root.Location, root.RightChild.Location);
-
-            if (radiusSquared >= dist * dist)
-            {
-                temp = NearestNeighbour(otherBranch, target, depth + 1);
-                best = Vector2D.Closest(temp.Location, best.Location, target) == temp.Location ? temp : best;
+                double currentVerticalToTarget = (axis == 0) ? current.particle.Location.X - target.particle.Location.X : current.particle.Location.Y - target.particle.Location.Y;
+                if (currentVerticalToTarget < Vector2D.AbsoluteSquareDifference(best.particle.Location, target.particle.Location))
+                {
+                    KD_Node possibleBest = NNSRecursive(other, target, depth + 1);
+                    if (Vector2D.AbsoluteSquareDifference(possibleBest.particle.Location, target.particle.Location) < Vector2D.AbsoluteSquareDifference(best.particle.Location, target.particle.Location))
+                    {
+                        best = possibleBest;
+                    }
+                }
             }
 
             return best;
@@ -66,8 +69,9 @@ namespace Particle_Collision
     
     public class KD_Node
     {
-        public Vector2D Location { get; set; } = new Vector2D();
-        public KD_Node LeftChild { get; set; }
-        public KD_Node RightChild { get; set; }
+        public Particle particle;
+
+        public KD_Node leftChild;
+        public KD_Node rightChild;
     }
 }
